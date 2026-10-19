@@ -1,0 +1,227 @@
+[
+ {
+  "word": "salary",
+  "ru": "Слово salary восходит к латинскому salarium, что связано с sal, «соль». По популярной версии так называли деньги римским солдатам на соль, но надёжных источников этому нет.",
+  "en": "From Latin salarium, related to sal 'salt'. The popular story about soldiers paid in salt is not well attested.",
+  "q": {
+   "ru": "С каким словом связано salary?",
+   "en": "Salary is related to which Latin word?"
+  },
+  "a": "sal (соль) / sal (salt)",
+  "w": [
+   "solus (один) / solus (alone)",
+   "salire (прыгать) / salire (to jump)",
+   "salus (здоровье) / salus (health)"
+  ]
+ },
+ {
+  "word": "вокзал",
+  "ru": "Слово пришло от названия Vauxhall, увеселительного сада в Лондоне. По его образцу назвали павильон для концертов в Павловске у станции железной дороги, и название перешло на здание станции.",
+  "en": "From Vauxhall, a London pleasure garden. A concert hall at Pavlovsk station was named after it, and the name passed to railway stations.",
+  "q": {
+   "ru": "Откуда русское слово «вокзал»?",
+   "en": "Where does Russian 'vokzal' (station) come from?"
+  },
+  "a": "Vauxhall в Лондоне / Vauxhall in London",
+  "w": [
+   "нем. Wagensaal / German Wagensaal",
+   "фр. voix sale / French voix sale",
+   "лат. vocare / Latin vocare"
+  ]
+ },
+ {
+  "word": "robot",
+  "ru": "Слово ввёл Карел Чапек в пьесе R.U.R. (1920), а придумал его брат Йозеф. В основе чешское robota, «подневольный труд», того же корня, что русское «работа».",
+  "en": "Coined for Karel Čapek's play R.U.R. (1920), suggested by his brother Josef, from Czech robota 'forced labour', cognate with Russian rabota 'work'.",
+  "q": {
+   "ru": "Что значит чешское robota?",
+   "en": "What does Czech 'robota' mean?"
+  },
+  "a": "подневольный труд / forced labour",
+  "w": [
+   "машина / machine",
+   "железо / iron",
+   "слуга-кукла / puppet servant"
+  ]
+ },
+ {
+  "word": "шахматы",
+  "ru": "Слово пришло из персидского через тюркские языки. Шах значит «король», а мат значит «умер» или «беспомощен», то есть «король мёртв».",
+  "en": "From Persian via Turkic: shāh 'king' + māt 'helpless, defeated' — 'the king is helpless'.",
+  "q": {
+   "ru": "Что значит «мат» в слове «шахматы»?",
+   "en": "What does 'mat' mean in 'shakhmaty' (chess)?"
+  },
+  "a": "беспомощен, побеждён / helpless, defeated",
+  "w": [
+   "доска / board",
+   "армия / army",
+   "игра / game"
+  ]
+ },
+ {
+  "word": "muscle",
+  "ru": "Латинское musculus дословно значит «мышонок»: сокращающаяся мышца под кожей напоминала бегающую мышь. Русское «мышца» устроено так же, от «мышь».",
+  "en": "Latin musculus means 'little mouse' — a flexing muscle looked like a mouse moving under the skin. Russian myshtsa likewise comes from mysh 'mouse'.",
+  "q": {
+   "ru": "Что буквально значит латинское musculus?",
+   "en": "What does Latin 'musculus' literally mean?"
+  },
+  "a": "мышонок / little mouse",
+  "w": [
+   "сила / strength",
+   "узел / knot",
+   "рука / arm"
+  ]
+ },
+ {
+  "word": "караоке",
+  "ru": "Японское слово из кара, «пустой», и окэ, сокращение от «окэсутора», то есть английского orchestra. Вместе это значит «пустой оркестр»: музыка без голоса.",
+  "en": "Japanese kara 'empty' + oke, short for ōkesutora 'orchestra' — an 'empty orchestra', music without the singer.",
+  "q": {
+   "ru": "Что значит «кара» в слове «караоке»?",
+   "en": "What does 'kara' mean in 'karaoke'?"
+  },
+  "a": "пустой / empty",
+  "w": [
+   "голос / voice",
+   "песня / song",
+   "весёлый / merry"
+  ]
+ },
+ {
+  "word": "nerd",
+  "ru": "Впервые слово встречается в книге доктора Сьюза If I Ran the Zoo (1950) как имя выдуманного зверька. Уже через год его использовали в сленге Детройта в значении «зануда».",
+  "en": "First recorded in Dr. Seuss's If I Ran the Zoo (1950) as a made-up creature; within a year it was Detroit slang for a dull, studious person.",
+  "q": {
+   "ru": "Где впервые зафиксировано слово nerd?",
+   "en": "Where is 'nerd' first recorded?"
+  },
+  "a": "в книге доктора Сьюза / in a Dr. Seuss book",
+  "w": [
+   "в MIT / at MIT",
+   "в журнале Mad / in Mad magazine",
+   "в фильме 1980-х / in a 1980s film"
+  ]
+ },
+ {
+  "word": "богатырь",
+  "ru": "Скорее всего, слово заимствовано из тюркских или монгольских языков: ср. монгольское баатар, «герой», и тюркское батыр. Отсюда же название Улан-Батор, «красный богатырь».",
+  "en": "Probably borrowed from Turkic/Mongolic: compare Mongolian baatar 'hero', Turkic batyr — as in Ulaanbaatar 'red hero'.",
+  "q": {
+   "ru": "Какое слово родственно «богатырю»?",
+   "en": "Which word is related to 'bogatyr'?"
+  },
+  "a": "батыр / baatar",
+  "w": [
+   "богатый / rich",
+   "бог / god",
+   "бодрый / brisk"
+  ]
+ },
+ {
+  "word": "avatar",
+  "ru": "Санскритское avatāra значит «нисхождение»: так называют воплощение бога, например Вишну, в земном облике. В игры и интернет слово пришло через Ultima IV и роман «Лавина» Нила Стивенсона.",
+  "en": "Sanskrit avatāra 'descent' — a god's (e.g. Vishnu's) incarnation on earth. Brought into computing by Ultima IV and Neal Stephenson's Snow Crash.",
+  "q": {
+   "ru": "Что значит санскритское avatāra?",
+   "en": "What does Sanskrit 'avatāra' mean?"
+  },
+  "a": "нисхождение / descent",
+  "w": [
+   "образ / image",
+   "маска / mask",
+   "двойник / double"
+  ]
+ },
+ {
+  "word": "хулиган",
+  "ru": "Слово пришло из английского hooligan. По распространённой версии оно связано с фамилией ирландской семьи Houlihan, известной в Лондоне 1890-х, но это не доказано.",
+  "en": "From English hooligan, possibly from the surname of a rowdy Irish family (Houlihan) in 1890s London; the origin is uncertain.",
+  "q": {
+   "ru": "Из какого языка пришло слово «хулиган»?",
+   "en": "Which language did Russian 'khuligan' come from?"
+  },
+  "a": "английский / English",
+  "w": [
+   "немецкий / German",
+   "французский / French",
+   "польский / Polish"
+  ]
+ },
+ {
+  "word": "algorithm",
+  "ru": "От имени персидского математика IX века аль-Хорезми: его латинизировали как Algoritmi. От названия его трактата «аль-джабр» происходит и слово «алгебра».",
+  "en": "From the 9th-century Persian mathematician al-Khwarizmi, Latinised as Algoritmi; his book title al-jabr gave us 'algebra'.",
+  "q": {
+   "ru": "От чего происходит слово «алгоритм»?",
+   "en": "Where does 'algorithm' come from?"
+  },
+  "a": "имя аль-Хорезми / al-Khwarizmi's name",
+  "w": [
+   "греч. arithmos / Greek arithmos",
+   "лат. algor / Latin algor",
+   "араб. «логика» / Arabic for logic"
+  ]
+ },
+ {
+  "word": "самурай",
+  "ru": "Японское самурай происходит от глагола сабурау, «служить» или «находиться при господине». Изначально самурай значило «слуга», а не «воин».",
+  "en": "From Japanese saburau 'to serve, attend'. A samurai was originally 'one who serves', not simply 'warrior'.",
+  "q": {
+   "ru": "Что изначально значило слово «самурай»?",
+   "en": "What did 'samurai' originally mean?"
+  },
+  "a": "тот, кто служит / one who serves",
+  "w": [
+   "меч / sword",
+   "воин / warrior",
+   "благородный / noble"
+  ]
+ },
+ {
+  "word": "galaxy",
+  "ru": "Греческое galaxias kyklos значит «молочный круг», от gala, «молоко». Отсюда и «Млечный Путь». По мифу, это молоко Геры, пролившееся на небо.",
+  "en": "Greek galaxias kyklos 'milky circle', from gala 'milk' — hence the Milky Way; in myth, Hera's spilled milk.",
+  "q": {
+   "ru": "От какого греческого слова «галактика»?",
+   "en": "Galaxy comes from Greek for…"
+  },
+  "a": "молоко / milk",
+  "w": [
+   "звезда / star",
+   "круг / circle",
+   "небо / sky"
+  ]
+ },
+ {
+  "word": "кимоно",
+  "ru": "Японское кимоно составлено из ки, «носить», и моно, «вещь». Дословно это просто «вещь для носки», то есть одежда.",
+  "en": "Japanese ki 'wear' + mono 'thing' — literally 'a thing to wear', i.e. clothing.",
+  "q": {
+   "ru": "Что буквально значит «кимоно»?",
+   "en": "What does 'kimono' literally mean?"
+  },
+  "a": "вещь для носки / thing to wear",
+  "w": [
+   "шёлк / silk",
+   "пояс / belt",
+   "праздничный / festive"
+  ]
+ },
+ {
+  "word": "punk",
+  "ru": "Сначала, в конце XVI века, punk значило «проститутка», позже стало значить «никчёмный человек» и «гнилое дерево для растопки». В 1970-х так назвали музыкальное направление.",
+  "en": "Recorded from the 1590s meaning 'prostitute', later 'worthless person' and 'rotten tinder wood'; adopted for the music in the 1970s.",
+  "q": {
+   "ru": "Что значило punk в XVI веке?",
+   "en": "What did 'punk' mean in the 1590s?"
+  },
+  "a": "проститутка / prostitute",
+  "w": [
+   "бунтарь / rebel",
+   "моряк / sailor",
+   "шут / jester"
+  ]
+ }
+]

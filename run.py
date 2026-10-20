@@ -8,7 +8,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from common.config import env
 from common.daily import every_day
-from lingvo.bot import WORDS, router
+from lingvo.bot import WORDS, photo, router
 
 
 async def post_word(bot: Bot) -> None:
@@ -20,8 +20,8 @@ async def post_word(bot: Bot) -> None:
     kb = InlineKeyboardMarkup(inline_keyboard=[[
         InlineKeyboardButton(text="🧠 Викторина / Quiz", url=f"https://t.me/{me.username}?start=quiz")
     ]])
-    await bot.send_message(channel, f"<b>{w['word']}</b>\n\n🇷🇺 {w['ru']}\n\n🇬🇧 {w['en']}",
-                           parse_mode="HTML", reply_markup=kb)
+    caption = f"<b>{w['word']}</b>\n\n🇷🇺 {w['ru']}\n\n🇬🇧 {w['en']}"
+    await bot.send_photo(channel, await photo(w), caption=caption[:1000], parse_mode="HTML", reply_markup=kb)
 
 
 async def main() -> None:

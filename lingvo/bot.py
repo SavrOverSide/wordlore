@@ -1,4 +1,6 @@
 """Lingvo bot: word of the day with etymology and quizzes. Premium is paid in Telegram Stars."""
+import asyncio
+import functools
 import json
 import random
 from datetime import date
@@ -6,11 +8,12 @@ from pathlib import Path
 
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import BufferedInputFile, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from common.config import lang_of
 from common.db import Store
 from common.stars import payments_router, send_invoice
+from .card import render
 
 WORDS = json.loads((Path(__file__).parent / "words.json").read_text(encoding="utf-8"))
 FREE_QUIZZES = 3
@@ -50,6 +53,17 @@ def card(w: dict, lang: str) -> str:
     return f"<b>{w['word']}</b>\n\n{w[lang]}"
 
 
+@functools.lru_cache(maxsize=64)
+def _image(word: str, ru: str, en: str) -> bytes:
+    return render(word, ru, en)
+
+
+async def photo(w: dict) -> BufferedInputFile:
+    """Picture card for a word, rendered off the event loop and cached."""
+    data = await asyncio.to_thread(_image, w["word"], w["ru"], w["en"])
+    return BufferedInputFile(data, filename=f"{w['word']}.jpg")
+
+
 @router.message(CommandStart())
 async def start(m: Message):
     if m.text and m.text.endswith(" quiz"):
@@ -60,7 +74,8 @@ async def start(m: Message):
 @router.message(Command("word"))
 async def word(m: Message):
     w = WORDS[date.today().toordinal() % len(WORDS)]
-    await m.answer(card(w, lang_of(m.from_user)), parse_mode="HTML")
+    lang = lang_of(m.from_user)
+    await m.answer_photo(await photo(w), caption=card(w, lang)[:1000], parse_mode="HTML")
 
 
 @router.message(Command("random"))
@@ -68,7 +83,8 @@ async def random_word(m: Message):
     lang = lang_of(m.from_user)
     if not store.is_premium(m.from_user.id):
         return await m.answer(T[lang]["need_premium"])
-    await m.answer(card(random.choice(WORDS), lang), parse_mode="HTML")
+    w = random.choice(WORDS)
+    await m.answer_photo(await photo(w), caption=card(w, lang)[:1000], parse_mode="HTML")
 
 
 @router.message(Command("quiz"))

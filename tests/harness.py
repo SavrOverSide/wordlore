@@ -2,6 +2,7 @@
 import pathlib
 import sys
 import tempfile
+import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tests" / "fake_aiogram"))   # fake aiogram first
@@ -55,7 +56,8 @@ class Chat:
     def last(self):
         return self.log[-1]
 
-    async def pay(self, payload, stars, charge="c1"):
+    async def pay(self, payload, stars, charge=None):
+        charge = charge or f"ch{self.user.id}-{len(self.log)}-{time.time_ns()}"
         q = PreCheckoutQuery(payload, stars)
         await self.router.feed("pre_checkout_query", q)
         sp = type("SP", (), {"telegram_payment_charge_id": charge, "total_amount": stars, "invoice_payload": payload})()

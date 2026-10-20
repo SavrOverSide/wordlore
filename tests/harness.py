@@ -31,6 +31,7 @@ class Chat:
     def _collect(self, msg):
         for item in msg.out:
             self.log.append(item)
+            check_message(item)
             kb = item.get("reply_markup")
             if kb is not None:
                 self.keyboards.append(kb)
@@ -90,3 +91,14 @@ def assert_buttons_routable(test, chat):
             test.assertLessEqual(len(b.callback_data.encode()), 64, b.callback_data)
             name = route_of(chat.router, b.callback_data)
             test.assertNotIn(name, (None, "stale_button"), f"dead button {b.text!r} -> {b.callback_data!r}")
+
+
+def check_message(item):
+    """Rules Telegram enforces that a fake can't: HTML only renders with parse_mode, length limits, no unfilled {placeholders}."""
+    body = item.get("text") or item.get("caption") or ""
+    limit = 1024 if item["kind"] == "photo" else 4096
+    assert len(body) <= limit, f"message too long ({len(body)}): {body[:60]!r}"
+    if "<b>" in body or "<a " in body or "<i>" in body:
+        assert item.get("parse_mode") == "HTML", f"HTML tags without parse_mode: {body[:80]!r}"
+    import re
+    assert not re.search(r"\{\w+\}", body), f"unfilled placeholder: {body[:80]!r}"

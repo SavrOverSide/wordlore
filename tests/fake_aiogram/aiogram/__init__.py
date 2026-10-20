@@ -118,6 +118,16 @@ class Bot:
     async def send_photo(self, chat_id, photo, **kw):
         await self._record("photo", chat_id, photo=photo, **kw)
 
+    async def set_my_commands(self, commands, language_code=None):
+        self.profile = getattr(self, "profile", [])
+        self.profile.append(("commands", language_code, commands))
+
+    async def set_my_description(self, description, language_code=None):
+        self.profile.append(("description", language_code, description))
+
+    async def set_my_short_description(self, short_description, language_code=None):
+        self.profile.append(("short", language_code, short_description))
+
     async def send_invoice(self, chat_id, **kw):
         await self._record("invoice", chat_id, **kw)
 

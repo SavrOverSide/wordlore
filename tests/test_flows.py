@@ -263,3 +263,22 @@ class DailyPost(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Profile(unittest.IsolatedAsyncioTestCase):
+    async def test_profile_texts_fit_telegram_limits_and_apply(self):
+        from common.profile import setup_profile
+        from lingvo.profile import COMMANDS, DESCRIPTION, SHORT
+        bot = Bot("x")
+        await setup_profile(bot, COMMANDS, DESCRIPTION, SHORT)
+        self.assertEqual({p[1] for p in bot.profile}, {None, "en", "ru"})
+        for lg in COMMANDS:
+            for cmd, desc in COMMANDS[lg]:
+                self.assertRegex(cmd, r"^[a-z0-9_]{1,32}$")
+                self.assertTrue(3 <= len(desc) <= 256)
+        # every menu command is a real handler
+        names = {c for c, _ in COMMANDS["ru"]}
+        self.assertEqual(names, {c for c, _ in COMMANDS["en"]})
+        for c in names:
+            m = harness.Message(harness.User(77), f"/{c}", Bot("x"))
+            self.assertIsNotNone(await wl.router.feed("message", m), c)

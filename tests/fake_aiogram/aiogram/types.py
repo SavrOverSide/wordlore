@@ -70,3 +70,8 @@ class PreCheckoutQuery(_Obj):
 
     async def answer(self, ok, error_message=None):
         self.result = (ok, error_message)
+
+
+class BotCommand:
+    def __init__(self, command, description):
+        self.command, self.description = command, description

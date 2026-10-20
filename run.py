@@ -7,8 +7,10 @@ from aiogram.types import BufferedInputFile, InlineKeyboardButton, InlineKeyboar
 
 from common.config import env
 from common.daily import every_day
+from common.profile import setup_profile
 from common.growth import broadcast, promo, ref_link, share_url
 from lingvo.bot import WORDS, esc, router, store, word_index, word_of_day, word_photo
+from lingvo.profile import COMMANDS, DESCRIPTION, SHORT
 from lingvo.texts import T
 
 
@@ -51,6 +53,7 @@ async def main() -> None:
     bot = Bot(env("BOT_TOKEN"))
     dp = Dispatcher()
     dp.include_router(router)
+    await setup_profile(bot, COMMANDS, DESCRIPTION, SHORT)
     await asyncio.gather(
         dp.start_polling(bot),
         every_day(env("POST_TIME", "10:00"), lambda: post_word(bot)),

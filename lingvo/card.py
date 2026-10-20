@@ -211,3 +211,50 @@ def render(word: str, ru: str, en: str, origin: str = "", path=(), handle: str =
     out = io.BytesIO()
     img.save(out, "JPEG", quality=92, optimize=True)
     return out.getvalue()
+
+
+RESULT_PALETTES = {  # by how well the round went
+    "great": ((14, 12, 38), (30, 16, 64), (255, 200, 87), (120, 60, 220), (255, 90, 140)),
+    "good": ((6, 24, 40), (8, 44, 66), (126, 240, 212), (20, 160, 200), (90, 80, 230)),
+    "meh": ((20, 20, 28), (36, 30, 60), (150, 190, 255), (80, 110, 255), (180, 90, 255)),
+}
+
+
+def render_result(score: int, total: int, rank: str, rank_en: str, streak: int, progress: float,
+                  next_rank: str = "", handle: str = "@wordlores") -> bytes:
+    """Shareable result card of a quiz round: big score, rank with progress bar, streak."""
+    kind = "great" if score == total else "good" if score * 2 >= total else "meh"
+    top, bottom, accent, g1, g2 = RESULT_PALETTES[kind]
+    rnd = random.Random(f"{score}/{total}/{rank}")
+    img = background(top, bottom, g1, g2, rnd)
+    A, white = accent + (255,), (255, 255, 255, 255)
+    d = ImageDraw.Draw(img, "RGBA")
+
+    d.rounded_rectangle((PAD, 80, PAD + 64, 144), 18, fill=A)
+    d.text((PAD + 32, 112), "W", font=font("ExtraBold", 40), fill=top + (255,), anchor="mm")
+    d.text((PAD + 86, 112), "WORDLORE", font=font("Bold", 30), fill=white, anchor="lm")
+    d.text((PAD + 86 + 190 + 24, 112), "ИТОГ ВИКТОРИНЫ · QUIZ RESULT", font=font("Medium", 22), fill=(255, 255, 255, 140), anchor="lm")
+
+    d.text((W // 2, 470), f"{score}/{total}", font=font("ExtraBold", 330), fill=white, anchor="mm")
+    verdict = {"great": "Безупречно · Flawless", "good": "Хороший раунд · Good round", "meh": "Есть куда расти · Room to grow"}[kind]
+    d.text((W // 2, 700), verdict, font=font("SemiBold", 40), fill=A, anchor="mm")
+
+    img = glass(img, (PAD - 24, 790, W - PAD + 24, 1130))
+    d = ImageDraw.Draw(img, "RGBA")
+    d.text((PAD + 26, 840), "РАНГ · RANK", font=font("Bold", 22), fill=A)
+    d.text((PAD + 26, 880), rank, font=font("ExtraBold", 54), fill=white)
+    d.text((PAD + 26, 950), rank_en, font=font("Medium", 32), fill=(255, 255, 255, 150))
+    bx0, bx1, by = PAD + 26, W - PAD - 26, 1030
+    d.rounded_rectangle((bx0, by, bx1, by + 22), 11, fill=(255, 255, 255, 40))
+    fill_to = bx0 + max(22, int((bx1 - bx0) * max(0.0, min(1.0, progress))))
+    d.rounded_rectangle((bx0, by, fill_to, by + 22), 11, fill=A)
+    d.text((bx0, by + 50), f"до ранга «{next_rank}»" if next_rank else "высший ранг · top rank", font=font("Medium", 24), fill=(255, 255, 255, 150))
+    if streak > 1:
+        d.text((bx1, by + 50), f"серия {streak} дн. · {streak}-day streak", font=font("Bold", 24), fill=A, anchor="ra")
+
+    d.line((PAD, H - 140, W - PAD, H - 140), fill=(255, 255, 255, 40), width=2)
+    d.text((PAD, H - 90), handle, font=font("Bold", 36), fill=A, anchor="lm")
+    d.text((W - PAD, H - 90), "t.me/wordlore_bot", font=font("Medium", 28), fill=(255, 255, 255, 150), anchor="rm")
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=92, optimize=True)
+    return out.getvalue()

@@ -1,9 +1,12 @@
-"""Lingvo bot: word of the day with etymology and quizzes. Premium is paid in Telegram Stars."""
+"""Wordlore bot: word of the day with etymology, 5-question quiz rounds, streaks, ranks, referrals.
+Premium (unlimited rounds, archive, unlimited saved words) is paid in Telegram Stars."""
 import asyncio
 import functools
+import html
 import json
 import random
-from datetime import date
+import time
+from datetime import datetime
 from pathlib import Path
 
 from aiogram import F, Router
@@ -11,46 +14,70 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import BufferedInputFile, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from common.config import lang_of
-from common.db import Store
+from common.db import Store, today
+from common.daily import TZ
+from common.growth import parse_ref, ref_link, share_url, start_arg
 from common.stars import payments_router, send_invoice
-from .card import render
+from .card import render, render_result
+from .texts import (FREE_ROUNDS, FREE_SAVED, INVITEE_BONUS, INVITER_BONUS, PRODUCT_DAYS, PRODUCTS, QUESTIONS, T, rank_for)
 
 WORDS = json.loads((Path(__file__).parent / "words.json").read_text(encoding="utf-8"))
-FREE_QUIZZES = 3
-PRODUCTS = {"premium_30": 99}  # payload -> Stars
 
 store = Store("lingvo")
 router = Router()
-
-T = {
-    "ru": {
-        "start": "Привет! Я рассказываю, откуда берутся слова.\n\n/word слово дня\n/quiz викторина ({free} в день бесплатно)\n/premium безлимит и весь архив за {price} ⭐ на 30 дней",
-        "limit": "Бесплатные викторины на сегодня закончились. Премиум даёт безлимит: /premium",
-        "right": "✅ Верно!", "wrong": "❌ Нет. Правильно: {a}",
-        "premium_title": "Премиум на 30 дней",
-        "premium_desc": "Безлимитные викторины и весь архив слов",
-        "paid": "Спасибо! Премиум активен 30 дней. /random открывает случайное слово из архива.",
-        "need_premium": "Архив доступен в премиуме: /premium",
-    },
-    "en": {
-        "start": "Hi! I tell the stories behind words.\n\n/word word of the day\n/quiz quiz ({free} free per day)\n/premium unlimited + full archive for {price} ⭐ / 30 days",
-        "limit": "You've used today's free quizzes. Premium is unlimited: /premium",
-        "right": "✅ Correct!", "wrong": "❌ No. Correct answer: {a}",
-        "premium_title": "Premium, 30 days",
-        "premium_desc": "Unlimited quizzes and the full word archive",
-        "paid": "Thank you! Premium is active for 30 days. /random shows a random word from the archive.",
-        "need_premium": "The archive is a premium feature: /premium",
-    },
-}
+ROUNDS: dict = {}   # user id -> running quiz round (in memory: a restart just ends open rounds)
 
 
-def pick(option: str, lang: str) -> str:
+# ---------------------------------------------------------------------------------------------
+# small helpers
+# ---------------------------------------------------------------------------------------------
+def lang(user) -> str:
+    """Stored choice first, then the Telegram interface language."""
+    return store.get_lang(user.id) or lang_of(user)
+
+
+def tr(user, key: str, **kw) -> str:
+    return T[lang(user)][key].format(**kw) if kw else T[lang(user)][key]
+
+
+def word_of_day() -> dict:
+    return WORDS[today().toordinal() % len(WORDS)]
+
+
+def word_index(word: dict) -> int:
+    return WORDS.index(word)
+
+
+def esc(text: str) -> str:
+    return html.escape(text, quote=False)
+
+
+def card(w: dict, lg: str) -> str:
+    return f"<b>{esc(w['word'])}</b>\n\n{esc(w[lg])}"
+
+
+def pick(option: str, lg: str) -> str:
     parts = option.split(" / ")
-    return parts[0] if lang == "ru" or len(parts) == 1 else parts[1]
+    return parts[0] if lg == "ru" or len(parts) == 1 else parts[1]
 
 
-def card(w: dict, lang: str) -> str:
-    return f"<b>{w['word']}</b>\n\n{w[lang]}"
+def button(text: str, data: str = "", url: str = "") -> InlineKeyboardButton:
+    return InlineKeyboardButton(text=text, url=url) if url else InlineKeyboardButton(text=text, callback_data=data)
+
+
+def keyboard(*rows) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[list(r) for r in rows])
+
+
+def menu(user) -> InlineKeyboardMarkup:
+    t = T[lang(user)]
+    sub = t["btn_sub_off"] if store.is_sub(user.id) else t["btn_sub_on"]
+    return keyboard(
+        [button(t["btn_quiz"], "m:quiz"), button(t["btn_word"], "m:word")],
+        [button(t["btn_me"], "m:me"), button(t["btn_saved"], "m:saved")],
+        [button(t["btn_invite"], "m:invite"), button(t["btn_premium"], "m:premium")],
+        [button(sub, "m:sub"), button(t["btn_lang"], "m:lang")],
+    )
 
 
 @functools.lru_cache(maxsize=64)
@@ -58,70 +85,331 @@ def _image(word: str, ru: str, en: str, origin: str, path: tuple) -> bytes:
     return render(word, ru, en, origin, path)
 
 
-async def photo(w: dict) -> BufferedInputFile:
+async def word_photo(w: dict) -> BufferedInputFile:
     """Picture card for a word, rendered off the event loop and cached."""
     fact = w.get("fact") or {"ru": w["ru"], "en": w["en"]}
     data = await asyncio.to_thread(_image, w["word"], fact["ru"], fact["en"], w.get("origin", ""), tuple(w.get("path", ())))
     return BufferedInputFile(data, filename=f"{w['word']}.jpg")
 
 
+async def bot_username(bot) -> str:
+    return (await bot.me()).username
+
+
+def word_keyboard(user, w: dict, link: str) -> InlineKeyboardMarkup:
+    t = T[lang(user)]
+    text = t["share_word"].format(word=w["word"])
+    return keyboard(
+        [button(t["btn_save"], f"sv:{word_index(w)}"), button(t["btn_share"], url=share_url(link, text))],
+        [button(t["btn_quiz"], "m:quiz")],
+    )
+
+
+async def send_word(m: Message, user, w: dict) -> None:
+    lg = lang(user)
+    link = ref_link(await bot_username(m.bot), user.id)
+    await m.answer_photo(await word_photo(w), caption=card(w, lg)[:1000], parse_mode="HTML",
+                         reply_markup=word_keyboard(user, w, link))
+
+
+# ---------------------------------------------------------------------------------------------
+# start, menu, profile
+# ---------------------------------------------------------------------------------------------
 @router.message(CommandStart())
 async def start(m: Message):
-    if m.text and m.text.endswith(" quiz"):
-        return await quiz(m)
-    await m.answer(T[lang_of(m.from_user)]["start"].format(free=FREE_QUIZZES, price=PRODUCTS["premium_30"]))
+    user = m.from_user
+    created = store.ensure_user(user.id)
+    if not store.get_lang(user.id):
+        store.set_lang(user.id, lang_of(user))  # remember it, so notifications can be localized later
+    arg = start_arg(m.text)
+    inviter = parse_ref(arg)
+    if created and inviter and store.add_referral(user.id, inviter):
+        store.add_credits(inviter, INVITER_BONUS)
+        store.add_credits(user.id, INVITEE_BONUS)
+        await m.answer(tr(user, "invite_welcome", c=INVITEE_BONUS))
+        try:
+            await m.bot.send_message(inviter, T[store.get_lang(inviter) or "ru"]["invite_notice"].format(b=INVITER_BONUS))
+        except Exception:
+            pass  # the inviter may have blocked the bot
+    if arg == "quiz":
+        return await start_round(m, user)
+    if arg == "sub":
+        store.set_sub(user.id, True)
+        return await m.answer(tr(user, "sub_on"), reply_markup=menu(user))
+    await m.answer(tr(user, "welcome"), parse_mode="HTML", reply_markup=menu(user))
 
 
+@router.message(Command("help"))
+async def help_cmd(m: Message):
+    await m.answer(tr(m.from_user, "welcome"), parse_mode="HTML", reply_markup=menu(m.from_user))
+
+
+@router.message(Command("lang"))
+async def lang_cmd(m: Message):
+    await toggle_lang(m, m.from_user)
+
+
+async def toggle_lang(m: Message, user) -> None:
+    store.set_lang(user.id, "en" if lang(user) == "ru" else "ru")
+    await m.answer(tr(user, "lang_set"), reply_markup=menu(user))
+
+
+def profile_text(user) -> str:
+    uid = user.id
+    st = store.user_stats(uid)
+    streak, best = store.streak(uid)
+    rank_ru, rank_en, _, _ = rank_for(st["correct"])
+    prem = (tr(user, "prem_on", date=datetime.fromtimestamp(store.premium_until(uid), TZ).strftime("%d.%m.%Y"))
+            if store.is_premium(uid) else tr(user, "prem_off"))
+    return tr(user, "me", rank=rank_ru if lang(user) == "ru" else rank_en, correct=st["correct"], answered=st["answered"],
+              rounds=st["rounds"], streak=streak, best=best, saved=store.count_saved(uid), refs=store.referrals(uid), prem=prem)
+
+
+@router.message(Command("me"))
+async def me_cmd(m: Message):
+    await m.answer(profile_text(m.from_user), parse_mode="HTML", reply_markup=menu(m.from_user))
+
+
+# ---------------------------------------------------------------------------------------------
+# word of the day, archive, saved words
+# ---------------------------------------------------------------------------------------------
 @router.message(Command("word"))
-async def word(m: Message):
-    w = WORDS[date.today().toordinal() % len(WORDS)]
-    lang = lang_of(m.from_user)
-    await m.answer_photo(await photo(w), caption=card(w, lang)[:1000], parse_mode="HTML")
+async def word_cmd(m: Message):
+    await send_word(m, m.from_user, word_of_day())
 
 
 @router.message(Command("random"))
-async def random_word(m: Message):
-    lang = lang_of(m.from_user)
-    if not store.is_premium(m.from_user.id):
-        return await m.answer(T[lang]["need_premium"])
-    w = random.choice(WORDS)
-    await m.answer_photo(await photo(w), caption=card(w, lang)[:1000], parse_mode="HTML")
+async def random_cmd(m: Message):
+    user = m.from_user
+    if not store.is_premium(user.id):
+        return await m.answer(tr(user, "need_premium", n=len(WORDS)), reply_markup=keyboard([button(T[lang(user)]["btn_premium"], "m:premium")]))
+    await send_word(m, user, random.choice(WORDS))
+
+
+@router.callback_query(F.data.startswith("sv:"))
+async def save_word(c: CallbackQuery):
+    user, idx = c.from_user, int(c.data[3:])
+    if not 0 <= idx < len(WORDS):
+        return await c.answer()
+    if store.has_saved(user.id, str(idx)):
+        return await c.answer(tr(user, "saved_already"))
+    if not store.is_premium(user.id) and store.count_saved(user.id) >= FREE_SAVED:
+        await c.message.answer(tr(user, "saved_full", n=FREE_SAVED), reply_markup=keyboard([button(T[lang(user)]["btn_premium"], "m:premium")]))
+        return await c.answer()
+    store.save_item(user.id, str(idx), WORDS[idx]["word"])
+    await c.answer(tr(user, "saved_ok"))
+
+
+@router.message(Command("saved"))
+async def saved_cmd(m: Message):
+    await show_saved(m, m.from_user)
+
+
+async def show_saved(m: Message, user) -> None:
+    lg, rows = lang(user), store.list_saved(user.id, 40)
+    limit = "" if store.is_premium(user.id) else f"/{FREE_SAVED}"
+    if not rows:
+        return await m.answer(tr(user, "saved_empty"))
+    lines = []
+    for key, _ in rows:
+        w = WORDS[int(key)]
+        fact = (w.get("fact") or {}).get(lg) or ""
+        lines.append(f"• <b>{esc(w['word'])}</b> — {esc(fact)}")
+    await m.answer(tr(user, "saved_title", n=len(rows), limit=limit) + "\n\n" + "\n".join(lines), parse_mode="HTML")
+
+
+# ---------------------------------------------------------------------------------------------
+# quiz rounds
+# ---------------------------------------------------------------------------------------------
+async def paywall(m: Message, user) -> None:
+    t = T[lang(user)]
+    await m.answer(t["limit"].format(b=INVITER_BONUS, c=INVITEE_BONUS), parse_mode="HTML",
+                   reply_markup=keyboard([button(t["btn_premium"], "m:premium")], [button(t["btn_invite"], "m:invite")]))
+
+
+async def start_round(m: Message, user) -> None:
+    open_round = ROUNDS.get(user.id)
+    if open_round and not open_round["answered"] and time.time() - open_round["t"] < 3600:
+        text, markup = question(user)  # resume the unfinished round instead of spending another attempt
+        return await m.answer(text, parse_mode="HTML", reply_markup=markup)
+    if not store.take(user.id, FREE_ROUNDS):
+        return await paywall(m, user)
+    now = time.time()
+    for uid in [u for u, r in ROUNDS.items() if now - r["t"] > 3600]:
+        del ROUNDS[uid]
+    ROUNDS[user.id] = {"qs": random.sample(range(len(WORDS)), QUESTIONS), "i": 0, "score": 0, "answered": False, "t": now}
+    text, markup = question(user)
+    await m.answer(text, parse_mode="HTML", reply_markup=markup)
+
+
+def question(user):
+    r, lg = ROUNDS[user.id], lang(user)
+    w = WORDS[r["qs"][r["i"]]]
+    options = [(w["a"], 1)] + [(o, 0) for o in w["w"]]
+    random.shuffle(options)
+    text = f"<i>{T[lg]['q_header'].format(n=r['i'] + 1, total=QUESTIONS)}</i>\n\n<b>{esc(w['word'])}</b>\n{esc(w['q'][lg])}"
+    rows = [[button(pick(o, lg), f"a:{r['i']}:{ok}")] for o, ok in options]
+    return text, InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 @router.message(Command("quiz"))
-async def quiz(m: Message):
-    lang = lang_of(m.from_user)
-    if not store.take(m.from_user.id, FREE_QUIZZES):
-        return await m.answer(T[lang]["limit"])
-    n = random.randrange(len(WORDS))
-    w = WORDS[n]
-    options = [(w["a"], 1)] + [(o, 0) for o in w["w"]]
-    random.shuffle(options)
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=pick(o, lang), callback_data=f"q:{n}:{ok}")] for o, ok in options
-    ])
-    await m.answer(f"<b>{w['word']}</b>\n{w['q'][lang]}", reply_markup=kb, parse_mode="HTML")
+async def quiz_cmd(m: Message):
+    store.ensure_user(m.from_user.id)
+    await start_round(m, m.from_user)
 
 
-@router.callback_query(F.data.startswith("q:"))
+@router.callback_query(F.data.startswith("a:"))
 async def answer(c: CallbackQuery):
-    _, n, ok = c.data.split(":")
-    lang = lang_of(c.from_user)
-    w = WORDS[int(n)]
-    verdict = T[lang]["right"] if ok == "1" else T[lang]["wrong"].format(a=pick(w["a"], lang))
-    await c.message.edit_text(f"{verdict}\n\n{card(w, lang)}", parse_mode="HTML")
+    user = c.from_user
+    _, i, ok = c.data.split(":")
+    r = ROUNDS.get(user.id)
+    if r is None or r["i"] != int(i):
+        await c.message.answer(tr(user, "round_gone"))
+        return await c.answer()
+    if r["answered"]:
+        return await c.answer()
+    r["answered"] = True
+    lg, w, right = lang(user), WORDS[r["qs"][r["i"]]], ok == "1"
+    r["score"] += 1 if right else 0
+    store.add_answer(user.id, right)
+    verdict = T[lg]["right"] if right else T[lg]["wrong"].format(a=pick(w["a"], lg))
+    last = r["i"] == QUESTIONS - 1
+    t = T[lg]
+    nxt = button(t["btn_finish"], "n:end") if last else button(t["btn_next"].format(n=r["i"] + 2, total=QUESTIONS), f"n:{r['i'] + 1}")
+    await c.message.edit_text(f"{verdict}\n\n{card(w, lg)}", parse_mode="HTML",
+                              reply_markup=keyboard([nxt], [button(t["btn_save"], f"sv:{r['qs'][r['i']]}")]))
     await c.answer()
 
 
+@router.callback_query(F.data.startswith("n:"))
+async def next_step(c: CallbackQuery):
+    user, step = c.from_user, c.data[2:]
+    r = ROUNDS.get(user.id)
+    if r is None:
+        await c.message.answer(tr(user, "round_gone"))
+        return await c.answer()
+    if step == "end":
+        if not r["answered"] or r["i"] != QUESTIONS - 1:
+            return await c.answer()
+        await finish_round(c, user, r)
+    elif int(step) == r["i"] + 1 and r["answered"]:
+        r["i"] += 1
+        r["answered"] = False
+        text, markup = question(user)
+        await c.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+    await c.answer()
+
+
+async def finish_round(c: CallbackQuery, user, r: dict) -> None:
+    lg, t = lang(user), T[lang(user)]
+    del ROUNDS[user.id]
+    store.finish_round(user.id)
+    streak, best, _ = store.streak_hit(user.id, grace=1 if store.is_premium(user.id) else 0)
+    correct = store.user_stats(user.id)["correct"]
+    rank_ru, rank_en, progress, next_ru = rank_for(correct)
+    rank = rank_ru if lg == "ru" else rank_en
+    image = await asyncio.to_thread(render_result, r["score"], QUESTIONS, rank_ru, rank_en, streak, progress, next_ru)
+    caption = t["result_caption"].format(score=r["score"], total=QUESTIONS, rank=rank, correct=correct,
+                                         streak=t["streak_line"].format(n=streak, best=best) if streak > 1 else t["streak_none"])
+    link = ref_link(await bot_username(c.bot), user.id)
+    share_text = t["share_result"].format(score=r["score"], total=QUESTIONS, rank=rank)
+    rows = [[button(t["btn_again"], "m:quiz"), button(t["btn_share"], url=share_url(link, share_text))]]
+    if not store.is_premium(user.id):
+        rows.append([button(t["btn_premium"], "m:premium")])
+    await c.message.answer_photo(BufferedInputFile(image, filename="result.jpg"), caption=caption, parse_mode="HTML",
+                                 reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+
+
+# ---------------------------------------------------------------------------------------------
+# invite, daily DM, premium
+# ---------------------------------------------------------------------------------------------
+@router.message(Command("invite"))
+async def invite_cmd(m: Message):
+    await show_invite(m, m.from_user)
+
+
+async def show_invite(m: Message, user) -> None:
+    t = T[lang(user)]
+    link = ref_link(await bot_username(m.bot), user.id)
+    await m.answer(tr(user, "invite", b=INVITER_BONUS, c=INVITEE_BONUS, link=link, n=store.referrals(user.id)),
+                   parse_mode="HTML", disable_web_page_preview=True,
+                   reply_markup=keyboard([button(t["btn_share"], url=share_url(link, t["share_word"].format(word="Wordlore")))]))
+
+
+@router.message(Command("sub"))
+async def sub_cmd(m: Message):
+    await toggle_sub(m, m.from_user)
+
+
+async def toggle_sub(m: Message, user) -> None:
+    on = not store.is_sub(user.id)
+    store.set_sub(user.id, on)
+    await m.answer(tr(user, "sub_on" if on else "sub_off"), reply_markup=menu(user))
+
+
 @router.message(Command("premium"))
-async def premium(m: Message):
-    t = T[lang_of(m.from_user)]
-    await send_invoice(m.bot, m.chat.id, t["premium_title"], t["premium_desc"], "premium_30", PRODUCTS["premium_30"])
+async def premium_cmd(m: Message):
+    await show_premium(m, m.from_user)
+
+
+async def show_premium(m: Message, user) -> None:
+    t = T[lang(user)]
+    uid = user.id
+    status = (tr(user, "prem_on", date=datetime.fromtimestamp(store.premium_until(uid), TZ).strftime("%d.%m.%Y"))
+              if store.is_premium(uid) else "")
+    off = round(100 - 100 * PRODUCTS["premium_365"] / (12 * PRODUCTS["premium_30"]))
+    await m.answer(tr(user, "premium", n=len(WORDS), status=status), parse_mode="HTML", reply_markup=keyboard(
+        [button(t["buy_30"].format(p=PRODUCTS["premium_30"]), "buy:premium_30")],
+        [button(t["buy_365"].format(p=PRODUCTS["premium_365"], off=off), "buy:premium_365")]))
+
+
+@router.callback_query(F.data.startswith("buy:"))
+async def buy(c: CallbackQuery):
+    user, key = c.from_user, c.data[4:]
+    if key not in PRODUCTS:
+        return await c.answer()
+    t = T[lang(user)]
+    kind = key.split("_")[1]
+    await send_invoice(c.bot, c.message.chat.id, t[f"inv_title_{kind}"], t["inv_desc"], key, PRODUCTS[key])
+    await c.answer()
 
 
 def on_paid(uid: int, payload: str) -> str:
-    store.add_premium(uid, 30)
-    return T["ru"]["paid"] + "\n\n" + T["en"]["paid"]
+    store.add_premium(uid, PRODUCT_DAYS.get(payload, 30))
+    date = datetime.fromtimestamp(store.premium_until(uid), TZ).strftime("%d.%m.%Y")
+    return T["ru"]["paid"].format(date=date) + "\n\n" + T["en"]["paid"].format(date=date)
+
+
+# ---------------------------------------------------------------------------------------------
+# menu buttons (inline) route to the same screens as the commands
+# ---------------------------------------------------------------------------------------------
+@router.callback_query(F.data.startswith("m:"))
+async def menu_button(c: CallbackQuery):
+    user, action, m = c.from_user, c.data[2:], c.message
+    store.ensure_user(user.id)
+    if action == "quiz":
+        await start_round(m, user)
+    elif action == "word":
+        await send_word(m, user, word_of_day())
+    elif action == "me":
+        await m.answer(profile_text(user), parse_mode="HTML", reply_markup=menu(user))
+    elif action == "saved":
+        await show_saved(m, user)
+    elif action == "invite":
+        await show_invite(m, user)
+    elif action == "premium":
+        await show_premium(m, user)
+    elif action == "sub":
+        await toggle_sub(m, user)
+    elif action == "lang":
+        await toggle_lang(m, user)
+    await c.answer()
 
 
 router.include_router(payments_router(store, PRODUCTS, on_paid))
+
+
+@router.callback_query()
+async def stale_button(c: CallbackQuery):
+    """Buttons from older versions of the bot (or expired rounds)."""
+    await c.answer(tr(c.from_user, "stale"), show_alert=True)

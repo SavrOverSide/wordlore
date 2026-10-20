@@ -8798,5 +8798,755 @@
    "ru": "Цифровое — буквально «пальцевое».",
    "en": "Digital literally means 'finger-ish'."
   }
+ },
+ {
+  "word": "camera",
+  "ru": "Слово camera восходит к латинскому camera «сводчатое помещение, комната», а то — к греческому kamara «свод». Фотографическая камера получила имя как сокращение от camera obscura, «тёмная комната».",
+  "en": "From Latin camera 'vaulted room, chamber', from Greek kamara 'vault'. The photographic camera is named as a shortening of camera obscura, 'dark chamber'.",
+  "q": {
+   "ru": "Сокращением какого выражения стало слово camera?",
+   "en": "Camera is a shortening of which phrase?"
+  },
+  "a": "camera obscura (тёмная комната) / camera obscura (dark chamber)",
+  "w": [
+   "lux scripta (написанный свет) / lux scripta (written light)",
+   "lanterna magica (волшебный фонарь) / lanterna magica (magic lantern)",
+   "speculum nigrum (чёрное зеркало) / speculum nigrum (black mirror)"
+  ],
+  "origin": "Латынь, греческий · Latin, Greek",
+  "path": [
+   "kamara|свод · vault",
+   "camera|комната · chamber",
+   "camera"
+  ],
+  "fact": {
+   "ru": "Первая «камера» была целой тёмной комнатой.",
+   "en": "The first 'camera' was a whole dark room."
+  }
+ },
+ {
+  "word": "trailer",
+  "ru": "Слово trailer образовано от английского trail «тянуть за собой, волочить». Так назвали прицеп, а позже и рекламный ролик фильма: в 1910-х такие анонсы показывали после основного фильма, то есть «вслед за ним».",
+  "en": "From English trail 'to drag behind'. It named a towed vehicle, and later a film advertisement, which in the 1910s was shown after the feature, trailing behind it.",
+  "q": {
+   "ru": "От какого английского глагола образовано trailer?",
+   "en": "Trailer is formed from which English verb?"
+  },
+  "a": "trail (тащить за собой) / trail (to drag behind)",
+  "w": [
+   "trade (торговать) / trade (to trade)",
+   "tread (ступать) / tread (to step)",
+   "trick (обманывать) / trick (to deceive)"
+  ],
+  "origin": "Английский · English",
+  "path": [
+   "trail|тащить за собой · drag",
+   "trailer|прицеп · towed vehicle",
+   "trailer"
+  ],
+  "fact": {
+   "ru": "Первые трейлеры шли в кино после фильма, а не до.",
+   "en": "Early trailers played after the film, not before."
+  }
+ },
+ {
+  "word": "tempo",
+  "ru": "Слово tempo пришло из итальянского, где tempo значит «время», а оно восходит к латинскому tempus. В музыке так называют скорость исполнения, то есть то, как «течёт время» в пьесе.",
+  "en": "Borrowed from Italian tempo 'time', from Latin tempus. In music it names the speed of a piece, how time moves in it.",
+  "q": {
+   "ru": "От какого латинского слова произошло tempo?",
+   "en": "Tempo comes from which Latin word?"
+  },
+  "a": "tempus (время) / tempus (time)",
+  "w": [
+   "tumultus (смятение) / tumultus (uproar)",
+   "templum (храм) / templum (temple)",
+   "tonus (тон) / tonus (tone)"
+  ],
+  "origin": "Итальянский · Italian",
+  "path": [
+   "tempus|время · time",
+   "tempo|время, темп · time, pace",
+   "tempo"
+  ],
+  "fact": {
+   "ru": "В итальянском tempo значит и «время», и «погода».",
+   "en": "In Italian, tempo means both 'time' and 'weather'."
+  }
+ },
+ {
+  "word": "rhapsody",
+  "ru": "Rhapsody восходит к греческому rhapsōidia, от rhapsōidos «исполнитель эпических песен». Оно составлено из rhaptein «сшивать» и ōidē «песня», то есть буквально «сшитая из песен».",
+  "en": "From Greek rhapsōidia, from rhapsōidos 'reciter of epic poems'. It is built from rhaptein 'to stitch' and ōidē 'song', so literally 'stitched songs'.",
+  "q": {
+   "ru": "Какой греческий глагол «сшивать» входит в rhapsody?",
+   "en": "Which Greek verb meaning 'to stitch' is inside rhapsody?"
+  },
+  "a": "rhaptein (шить) / rhaptein (to sew)",
+  "w": [
+   "rhein (течь) / rhein (to flow)",
+   "rhegnynai (рвать) / rhegnynai (to tear)",
+   "rhiptein (бросать) / rhiptein (to throw)"
+  ],
+  "origin": "Греческий · Greek",
+  "path": [
+   "rhaptein|сшивать · to stitch",
+   "ōidē|песня · song",
+   "rhapsody"
+  ],
+  "fact": {
+   "ru": "Рапсод буквально «сшивал» песни в единый рассказ.",
+   "en": "A rhapsode literally 'stitched' songs together."
+  }
+ },
+ {
+  "word": "stoic",
+  "ru": "Stoic происходит от греческого stoa «портик, галерея». Философ Зенон учил в афинской Стое Пойкиле, «Расписной галерее», и его последователей назвали стоиками.",
+  "en": "From Greek stoa 'porch, colonnade'. Zeno taught in the Stoa Poikile, the 'Painted Porch' of Athens, and his followers were called Stoics.",
+  "q": {
+   "ru": "С каким греческим словом связано stoic?",
+   "en": "Stoic is related to which Greek word?"
+  },
+  "a": "stoa (портик) / stoa (porch)",
+  "w": [
+   "stoma (рот) / stoma (mouth)",
+   "stoicheion (стихия) / stoicheion (element)",
+   "stratos (войско) / stratos (army)"
+  ],
+  "origin": "Греческий · Greek",
+  "path": [
+   "stoa|портик · porch",
+   "Stoikos|из Стой · of the Porch",
+   "stoic"
+  ],
+  "fact": {
+   "ru": "Школа названа по месту, где учили, а не по идее.",
+   "en": "The school is named for a place, not an idea."
+  }
+ },
+ {
+  "word": "cynic",
+  "ru": "Cynic восходит к греческому kynikos «собачий», от kyōn, kynos «собака». Почему философов так назвали, спорят: из-за их «собачьего» образа жизни или из-за гимнасия Киносарг, где они собирались.",
+  "en": "From Greek kynikos 'dog-like', from kyōn, kynos 'dog'. Why the philosophers got this name is debated: their dog-like way of life, or the Cynosarges gymnasium.",
+  "q": {
+   "ru": "Какое животное лежит в основе слова cynic?",
+   "en": "Which animal lies behind the word cynic?"
+  },
+  "a": "kyōn (собака) / kyōn (dog)",
+  "w": [
+   "lykos (волк) / lykos (wolf)",
+   "hippos (лошадь) / hippos (horse)",
+   "leōn (лев) / leōn (lion)"
+  ],
+  "origin": "Греческий · Greek",
+  "path": [
+   "kyōn|собака · dog",
+   "kynikos|собачий · dog-like",
+   "cynic"
+  ],
+  "fact": {
+   "ru": "Диоген прославился, живя «по-собачьи» в бочке-пифосе.",
+   "en": "Diogenes lived 'like a dog' in a large jar."
+  }
+ },
+ {
+  "word": "gladiator",
+  "ru": "Gladiator — латинское слово, «мечник», от gladius «меч». Так называли бойцов, сражавшихся на арене для зрителей.",
+  "en": "A Latin word meaning 'swordsman', from gladius 'sword'. It named fighters who battled on the arena for spectators.",
+  "q": {
+   "ru": "От какого латинского слова произошло gladiator?",
+   "en": "Gladiator comes from which Latin word?"
+  },
+  "a": "gladius (меч) / gladius (sword)",
+  "w": [
+   "clavis (ключ) / clavis (key)",
+   "scutum (щит) / scutum (shield)",
+   "hasta (копьё) / hasta (spear)"
+  ],
+  "origin": "Латынь · Latin",
+  "path": [
+   "gladius|меч · sword",
+   "gladiator|мечник · swordsman",
+   "gladiator"
+  ],
+  "fact": {
+   "ru": "Gladiolus, цветок гладиолус, назван «мечиком» за форму листьев.",
+   "en": "The gladiolus flower is a 'little sword' by leaf shape."
+  }
+ },
+ {
+  "word": "duel",
+  "ru": "Duel пришло из средневековой латыни duellum, а то — из старой латинской формы duellum «война», позднее ставшей bellum. Позже слово сблизили с duo «два», и оно стало значить «бой двоих».",
+  "en": "From Medieval Latin duellum, from Latin duellum, the old form of bellum 'war'. Later it was linked with duo 'two', giving the sense 'combat of two'.",
+  "q": {
+   "ru": "Какое латинское слово «война» стоит за duel?",
+   "en": "Which Latin word for 'war' stands behind duel?"
+  },
+  "a": "duellum (война) / duellum (war)",
+  "w": [
+   "dux (вождь) / dux (leader)",
+   "dolor (боль) / dolor (pain)",
+   "dominus (господин) / dominus (master)"
+  ],
+  "origin": "Латынь · Latin",
+  "path": [
+   "duellum|война · war",
+   "duellum|поединок · combat of two",
+   "duel"
+  ],
+  "fact": {
+   "ru": "Слово bellum («война») когда-то звучало как duellum.",
+   "en": "The Latin 'bellum' (war) once sounded like 'duellum'."
+  }
+ },
+ {
+  "word": "trek",
+  "ru": "Trek заимствовано из африкаанс trek «путешествие, переселение», от нидерландского trekken «тянуть, тащить». В английском оно закрепилось после «Великого трека» буров в 1830-х годах.",
+  "en": "From Afrikaans trek 'journey, migration', from Dutch trekken 'to pull, draw'. English adopted it after the Boers' Great Trek of the 1830s.",
+  "q": {
+   "ru": "Какой нидерландский глагол лежит в основе trek?",
+   "en": "Which Dutch verb lies behind trek?"
+  },
+  "a": "trekken (тянуть) / trekken (to pull)",
+  "w": [
+   "trappen (ступать) / trappen (to step)",
+   "varen (плыть) / varen (to sail)",
+   "dragen (нести) / dragen (to carry)"
+  ],
+  "origin": "Африкаанс · Afrikaans",
+  "path": [
+   "trekken|тянуть · to pull",
+   "trek|переселение · migration",
+   "trek"
+  ],
+  "fact": {
+   "ru": "Сначала так называли путь волов, тянущих повозки.",
+   "en": "It first meant a journey of oxen pulling wagons."
+  }
+ },
+ {
+  "word": "tourist",
+  "ru": "Tourist образовано от tour «поездка по кругу», из старофранцузского tour «оборот, поворот». Дальше цепочка ведёт к латинскому tornus «токарный станок» и греческому tornos «циркуль, токарный инструмент».",
+  "en": "Formed from tour, from Old French tour 'turn, round', then Latin tornus 'lathe', Greek tornos 'tool for drawing a circle'. A tour is thus a round trip.",
+  "q": {
+   "ru": "Какой греческий инструмент стоит в начале цепочки tour?",
+   "en": "Which Greek tool is at the start of the chain behind tour?"
+  },
+  "a": "tornos (циркуль, токарный станок) / tornos (compass, lathe)",
+  "w": [
+   "trochos (колесо) / trochos (wheel)",
+   "taxis (порядок) / taxis (order)",
+   "tonos (натяжение) / tonos (tension)"
+  ],
+  "origin": "Греческий, французский · Greek, French",
+  "path": [
+   "tornos|циркуль · compass",
+   "tour|круг, поворот · turn, round",
+   "tourist"
+  ],
+  "fact": {
+   "ru": "Туризм родственен токарному станку: оба «вращаются».",
+   "en": "Tourism and the lathe share one root: 'turning'."
+  }
+ },
+ {
+  "word": "чемпион",
+  "ru": "Слово «чемпион» пришло из английского champion, а то — из старофранцузского champion «боец», от позднелатинского campio. Дальше оно восходит к латинскому campus «поле»: чемпион — тот, кто бьётся на поле.",
+  "en": "Russian чемпион is from English champion, from Old French champion 'fighter', Late Latin campio. It goes back to Latin campus 'field', a champion being one who fights on the field.",
+  "q": {
+   "ru": "Какое латинское слово «поле» лежит в основе слова «чемпион»?",
+   "en": "Which Latin word for 'field' lies behind чемпион (champion)?"
+  },
+  "a": "campus (поле) / campus (field)",
+  "w": [
+   "caput (голова) / caput (head)",
+   "carrus (повозка) / carrus (cart)",
+   "castrum (крепость) / castrum (fort)"
+  ],
+  "origin": "Английский · English",
+  "path": [
+   "campus|поле · field",
+   "campio|боец · fighter",
+   "чемпион"
+  ],
+  "fact": {
+   "ru": "Тот же campus дал «кампус» университета.",
+   "en": "The same campus gave us university 'campus'."
+  }
+ },
+ {
+  "word": "гараж",
+  "ru": "Слово «гараж» заимствовано из французского garage, от garer «ставить на стоянку, укрывать». Французский глагол, в свою очередь, германского происхождения.",
+  "en": "Russian гараж is borrowed from French garage, from garer 'to shelter, moor'. The French verb is itself of Germanic origin.",
+  "q": {
+   "ru": "От какого французского глагола образовано слово garage?",
+   "en": "Garage is formed from which French verb?"
+  },
+  "a": "garer (укрывать, ставить) / garer (to shelter, moor)",
+  "w": [
+   "gagner (выигрывать) / gagner (to win)",
+   "garnir (снабжать) / garnir (to equip)",
+   "gratter (скрести) / gratter (to scratch)"
+  ],
+  "origin": "Французский · French",
+  "path": [
+   "garer|укрывать · to shelter",
+   "garage|укрытие · shelter",
+   "гараж"
+  ],
+  "fact": {
+   "ru": "Сначала garer относилось к судам: «ставить в док».",
+   "en": "Garer first applied to boats: 'to dock'."
+  }
+ },
+ {
+  "word": "бумага",
+  "ru": "Этимология слова «бумага» не вполне ясна. Обычно его связывают с итальянским bambagia «хлопок» (через средневековое греческое pambakion, в конечном счёте из иранских языков); Фасмер допускал промежуточную форму *бубага. В старых русских текстах слово ещё значило «хлопок»: это значение сохранилось в слове «хлопчатобумажный».",
+  "en": "The origin of Russian бумага is not fully clear. It is usually linked to Italian bambagia 'cotton' (via Medieval Greek pambakion, ultimately from Iranian); Vasmer allowed an intermediate *bubaga. In early Russian texts the word still meant 'cotton', a sense preserved in хлопчатобумажный 'cotton (fabric)'.",
+  "q": {
+   "ru": "Что означало итальянское bambagia, с которым обычно связывают «бумагу»?",
+   "en": "What did Italian bambagia, usually linked to бумага, mean?"
+  },
+  "a": "bambagia (хлопок) / bambagia (cotton)",
+  "w": [
+   "lana (шерсть) / lana (wool)",
+   "lino (лён) / lino (flax)",
+   "seta (шёлк) / seta (silk)"
+  ],
+  "origin": "Итальянский, греческий · Italian, Greek",
+  "path": [
+   "pambakion|хлопок · cotton",
+   "bambagia|вата, хлопок · cotton",
+   "бумага"
+  ],
+  "fact": {
+   "ru": "Русская «бумага» когда-то значила именно «хлопок».",
+   "en": "Russian бумага once simply meant 'cotton'."
+  }
+ },
+ {
+  "word": "лампа",
+  "ru": "Слово «лампа» пришло в русский через западноевропейские языки (немецкое Lampe, французское lampe) из латинского lampas, от греческого lampas «факел». Греческое слово связано с глаголом lampein «светить».",
+  "en": "Russian лампа came through Western European languages (German Lampe, French lampe) from Latin lampas, from Greek lampas 'torch'. The Greek is tied to lampein 'to shine'.",
+  "q": {
+   "ru": "С каким греческим глаголом связана «лампа»?",
+   "en": "Which Greek verb is the word lamp tied to?"
+  },
+  "a": "lampein (светить) / lampein (to shine)",
+  "w": [
+   "lyein (развязывать) / lyein (to untie)",
+   "legein (говорить) / legein (to speak)",
+   "lambanein (брать) / lambanein (to take)"
+  ],
+  "origin": "Греческий · Greek",
+  "path": [
+   "lampein|светить · to shine",
+   "lampas|факел · torch",
+   "лампа"
+  ],
+  "fact": {
+   "ru": "Лампа начиналась как факел, а не как светильник.",
+   "en": "A lamp began as a torch."
+  }
+ },
+ {
+  "word": "арена",
+  "ru": "Слово «арена» пришло из латинского arena, более старая форма harena значила «песок». Так называли посыпанную песком площадку амфитеатра, где проходили бои.",
+  "en": "Russian арена is from Latin arena, older harena, meaning 'sand'. It named the sand-strewn floor of an amphitheatre where fights were held.",
+  "q": {
+   "ru": "Что означало латинское harena?",
+   "en": "What did Latin harena mean?"
+  },
+  "a": "harena (песок) / harena (sand)",
+  "w": [
+   "hasta (копьё) / hasta (spear)",
+   "herba (трава) / herba (grass)",
+   "ara (алтарь) / ara (altar)"
+  ],
+  "origin": "Латынь · Latin",
+  "path": [
+   "harena|песок · sand",
+   "arena|песчаная площадка · sandy floor",
+   "арена"
+  ],
+  "fact": {
+   "ru": "Песок на арене впитывал кровь, отсюда и название.",
+   "en": "The arena's sand soaked up blood, hence the name."
+  }
+ },
+ {
+  "word": "ночь",
+  "ru": "Слово «ночь» — исконное, из праславянского *noktь, восходящего к праиндоевропейскому *nókʷts. Родственны латинское nox, греческое nyx и английское night.",
+  "en": "Russian ночь is native, from Proto-Slavic *noktь, going back to Proto-Indo-European *nókʷts. Related are Latin nox, Greek nyx and English night.",
+  "q": {
+   "ru": "С каким латинским словом родственна «ночь»?",
+   "en": "Russian ночь is related to which Latin word?"
+  },
+  "a": "nox (ночь) / nox (night)",
+  "w": [
+   "nix (снег) / nix (snow)",
+   "nodus (узел) / nodus (knot)",
+   "novus (новый) / novus (new)"
+  ],
+  "origin": "Русский · Russian",
+  "path": [
+   "*nókʷts|ночь · night",
+   "*noktь|праславянское · Proto-Slavic",
+   "ночь"
+  ],
+  "fact": {
+   "ru": "Одно слово в русском, английском и латыни: ночь, night, nox.",
+   "en": "One word in Russian, English and Latin: ночь, night, nox."
+  }
+ },
+ {
+  "word": "зима",
+  "ru": "Слово «зима» — исконное, из праславянского *zima, от праиндоевропейского корня со значением «зима, снег». Родственны латинское hiems, греческое cheimōn и санскритское hima «снег».",
+  "en": "Russian зима is native, from Proto-Slavic *zima, from a Proto-Indo-European root for 'winter, snow'. Related are Latin hiems, Greek cheimōn and Sanskrit hima 'snow'.",
+  "q": {
+   "ru": "С каким санскритским словом родственна «зима»?",
+   "en": "Russian зима is related to which Sanskrit word?"
+  },
+  "a": "hima (снег, мороз) / hima (snow, frost)",
+  "w": [
+   "agni (огонь) / agni (fire)",
+   "jala (вода) / jala (water)",
+   "vāyu (ветер) / vāyu (wind)"
+  ],
+  "origin": "Русский · Russian",
+  "path": [
+   "*ǵʰei-|зима · winter",
+   "*zima|праславянское · Proto-Slavic",
+   "зима"
+  ],
+  "fact": {
+   "ru": "Гималаи на санскрите: «обитель снега», родня слову «зима».",
+   "en": "Himalaya means 'abode of snow', kin of Russian зима."
+  }
+ },
+ {
+  "word": "жена",
+  "ru": "Слово «жена» — исконное, из праславянского *žena, от праиндоевропейского *gʷén-eh₂ «женщина». Родственны греческое gynē (отсюда «гинекология») и английское queen.",
+  "en": "Russian жена is native, from Proto-Slavic *žena, from Proto-Indo-European *gʷén-eh₂ 'woman'. Related are Greek gynē (as in gynecology) and English queen.",
+  "q": {
+   "ru": "С каким греческим словом родственна «жена»?",
+   "en": "Russian жена is related to which Greek word?"
+  },
+  "a": "gynē (женщина) / gynē (woman)",
+  "w": [
+   "gē (земля) / gē (earth)",
+   "gala (молоко) / gala (milk)",
+   "gaster (живот) / gaster (belly)"
+  ],
+  "origin": "Русский · Russian",
+  "path": [
+   "*gʷén-eh₂|женщина · woman",
+   "*žena|праславянское · Proto-Slavic",
+   "жена"
+  ],
+  "fact": {
+   "ru": "Английское queen — дальний родственник русской «жены».",
+   "en": "English 'queen' is a distant cousin of Russian жена."
+  }
+ },
+ {
+  "word": "имя",
+  "ru": "Слово «имя» — исконное, из праславянского *jьmę, восходящего к праиндоевропейскому *h₁néh₃mn̥. Родственны латинское nomen, греческое onoma и английское name.",
+  "en": "Russian имя is native, from Proto-Slavic *jьmę, going back to Proto-Indo-European *h₁néh₃mn̥. Related are Latin nomen, Greek onoma and English name.",
+  "q": {
+   "ru": "С каким латинским словом родственно «имя»?",
+   "en": "Russian имя is related to which Latin word?"
+  },
+  "a": "nomen (имя) / nomen (name)",
+  "w": [
+   "numerus (число) / numerus (number)",
+   "norma (правило) / norma (rule)",
+   "novem (девять) / novem (nine)"
+  ],
+  "origin": "Русский · Russian",
+  "path": [
+   "*h₁néh₃mn|имя · name",
+   "*jьmę|праславянское · Proto-Slavic",
+   "имя"
+  ],
+  "fact": {
+   "ru": "Имя, name, nomen, onoma: один праиндоевропейский корень.",
+   "en": "Имя, name, nomen, onoma: one Proto-Indo-European root."
+  }
+ },
+ {
+  "word": "ветер",
+  "ru": "Слово «ветер» — исконное, из праславянского *větrъ, от праиндоевропейского корня *h₂weh₁- «дуть». Родственны латинское ventus, английское wind и немецкое Wind.",
+  "en": "Russian ветер is native, from Proto-Slavic *větrъ, from the Proto-Indo-European root *h₂weh₁- 'to blow'. Related are Latin ventus and English wind.",
+  "q": {
+   "ru": "С каким латинским словом родственен «ветер»?",
+   "en": "Russian ветер is related to which Latin word?"
+  },
+  "a": "ventus (ветер) / ventus (wind)",
+  "w": [
+   "vena (жила) / vena (vein)",
+   "vinum (вино) / vinum (wine)",
+   "virtus (доблесть) / virtus (valor)"
+  ],
+  "origin": "Русский · Russian",
+  "path": [
+   "*h₂weh₁-|дуть · to blow",
+   "*větrъ|праславянское · Proto-Slavic",
+   "ветер"
+  ],
+  "fact": {
+   "ru": "Ветер, wind и ventus — родня, а «вентилятор» от ventus.",
+   "en": "Wind and ventus are kin; 'ventilate' comes from ventus."
+  }
+ },
+ {
+  "word": "kimchi",
+  "ru": "Kimchi — корейское слово 김치 (gimchi). Чаще всего его возводят к китайско-корейскому 沈菜 (chimchae) «замоченные овощи»; раннее написание — timchoy (1527). Версия спорная: некоторые лингвисты считают слово исконно корейским.",
+  "en": "Kimchi is Korean 김치 (gimchi). It is most often traced to Sino-Korean 沈菜 (chimchae) 'soaked vegetables'; the earliest spelling is timchoy (1527). This is disputed: some linguists think the word is native Korean.",
+  "q": {
+   "ru": "Что означает китайско-корейское 沈菜, к которому чаще всего возводят kimchi?",
+   "en": "What does the Sino-Korean 沈菜, the most common proposed source of kimchi, mean?"
+  },
+  "a": "沈菜 (замоченные овощи) / 沈菜 (soaked vegetables)",
+  "w": [
+   "辣椒 (острый перец) / 辣椒 (chili pepper)",
+   "白菜 (пекинская капуста) / 白菜 (napa cabbage)",
+   "鹽水 (солёная вода) / 鹽水 (salt water)"
+  ],
+  "origin": "Корейский · Korean",
+  "path": [
+   "沈菜|замоченные овощи · soaked veg",
+   "timchoy|среднекорейское · Middle Korean",
+   "kimchi"
+  ],
+  "fact": {
+   "ru": "В названии нет слова «острый»: перец появился позже.",
+   "en": "The name does not say 'spicy': chili came later."
+  }
+ },
+ {
+  "word": "tofu",
+  "ru": "Tofu пришло из японского tōfu (豆腐), заимствованного из китайского dòufu. Первая часть значит «боб», вторая — «свернувшийся, скисший».",
+  "en": "Tofu is from Japanese tōfu (豆腐), borrowed from Chinese dòufu. The first part means 'bean', the second 'curdled, soured'.",
+  "q": {
+   "ru": "Что означает иероглиф 豆 в слове tofu?",
+   "en": "What does the character 豆 in tofu mean?"
+  },
+  "a": "豆 (боб) / 豆 (bean)",
+  "w": [
+   "米 (рис) / 米 (rice)",
+   "水 (вода) / 水 (water)",
+   "麥 (пшеница) / 麥 (wheat)"
+  ],
+  "origin": "Китайский, японский · Chinese, Japanese",
+  "path": [
+   "dòufu|бобовый творог · bean curd",
+   "tōfu|японская форма · Japanese",
+   "tofu"
+  ],
+  "fact": {
+   "ru": "Иероглиф «свернувшийся» делает тофу «творогом из бобов».",
+   "en": "The 'curdled' character makes tofu 'bean curd'."
+  }
+ },
+ {
+  "word": "tai chi",
+  "ru": "Tai chi — от китайского 太極 (tàijí) «великий предел» из древней философии. Полное название 太極拳 (tàijí quán) значит «кулак великого предела».",
+  "en": "Tai chi is from Chinese 太極 (tàijí) 'supreme ultimate', from ancient philosophy. The full name 太極拳 (tàijí quán) means 'supreme ultimate fist'.",
+  "q": {
+   "ru": "Как переводится китайское 太極 (tàijí)?",
+   "en": "How is the Chinese 太極 (tàijí) translated?"
+  },
+  "a": "太極 (великий предел) / 太極 (supreme ultimate)",
+  "w": [
+   "太陽 (солнце) / 太陽 (the sun)",
+   "氣 (энергия, дыхание) / 氣 (vital energy, breath)",
+   "柔道 (мягкий путь) / 柔道 (gentle way)"
+  ],
+  "origin": "Китайский · Chinese",
+  "path": [
+   "太極|великий предел · supreme ultimate",
+   "tàijí quán|кулак предела · fist",
+   "tai chi"
+  ],
+  "fact": {
+   "ru": "Знак инь-ян в Китае тоже называют «тайцзи-ту».",
+   "en": "The yin-yang symbol is also called taijitu in China."
+  }
+ },
+ {
+  "word": "feng shui",
+  "ru": "Feng shui — китайское 風水 (fēng shuǐ), буквально «ветер и вода». Название связывают с древним учением о расположении построек и могил относительно природных сил.",
+  "en": "Feng shui is Chinese 風水 (fēng shuǐ), literally 'wind and water'. The name refers to an ancient practice of placing buildings and graves in harmony with natural forces.",
+  "q": {
+   "ru": "Какие две стихии составляют название feng shui?",
+   "en": "Which two elements make up the name feng shui?"
+  },
+  "a": "風水 (ветер и вода) / 風水 (wind and water)",
+  "w": [
+   "火土 (огонь и земля) / 火土 (fire and earth)",
+   "山海 (гора и море) / 山海 (mountain and sea)",
+   "日月 (солнце и луна) / 日月 (sun and moon)"
+  ],
+  "origin": "Китайский · Chinese",
+  "path": [
+   "風|ветер · wind",
+   "水|вода · water",
+   "feng shui"
+  ],
+  "fact": {
+   "ru": "Фэншуй дословно: «ветер-вода», без слова «энергия».",
+   "en": "Literally 'wind-water', without the word 'energy'."
+  }
+ },
+ {
+  "word": "kowtow",
+  "ru": "Kowtow — английская передача китайского 叩頭 (kòutóu), в кантонской форме kau tau. Дословно это «стучать головой», то есть бить челом в земном поклоне.",
+  "en": "Kowtow is English for Chinese 叩頭 (kòutóu), in Cantonese kau tau. Literally 'knock the head', a deep bow touching the head to the ground.",
+  "q": {
+   "ru": "Что дословно означает китайское 叩頭 (kòutóu)?",
+   "en": "What does Chinese 叩頭 (kòutóu) literally mean?"
+  },
+  "a": "叩頭 (стучать головой) / 叩頭 (knock the head)",
+  "w": [
+   "點頭 (кивать головой) / 點頭 (nod the head)",
+   "回頭 (оборачиваться) / 回頭 (turn the head)",
+   "舉頭 (поднять голову) / 舉頭 (raise the head)"
+  ],
+  "origin": "Китайский · Chinese",
+  "path": [
+   "叩|стучать · to knock",
+   "頭|голова · head",
+   "kowtow"
+  ],
+  "fact": {
+   "ru": "В английском kowtow стало «лебезить перед кем-то».",
+   "en": "In English kowtow came to mean 'to grovel'."
+  }
+ },
+ {
+  "word": "sumo",
+  "ru": "Sumo — японское 相撲 (sumō). Иероглифы читаются как «бить друг друга», а само чтение, как считают, происходит от древнего глагола sumafu «состязаться, сопротивляться».",
+  "en": "Sumo is Japanese 相撲 (sumō). The characters mean 'strike each other', while the reading is thought to come from an old verb sumafu 'to contend, resist'.",
+  "q": {
+   "ru": "Что означают иероглифы 相撲 в слове sumo?",
+   "en": "What do the characters 相撲 in sumo mean?"
+  },
+  "a": "相撲 (бить друг друга) / 相撲 (strike each other)",
+  "w": [
+   "大力 (большая сила) / 大力 (great strength)",
+   "投技 (бросковая техника) / 投技 (throwing technique)",
+   "土俵 (глиняный мешок) / 土俵 (clay-bag ring)"
+  ],
+  "origin": "Японский · Japanese",
+  "path": [
+   "相撲|бить друг друга · mutual strike",
+   "sumafu|состязаться · to contend",
+   "sumo"
+  ],
+  "fact": {
+   "ru": "Сумо тесно связано с ритуалами синто.",
+   "en": "Sumo is closely tied to Shinto rituals."
+  }
+ },
+ {
+  "word": "sultan",
+  "ru": "Sultan — от арабского سلطان (sulṭān) «власть, правитель». Возможно, арабское слово восходит к арамейскому shultana «власть» (так считает, например, Klein). Сначала оно означало «власть, полномочие», затем стало титулом правителя.",
+  "en": "Sultan is from Arabic سلطان (sulṭān) 'power, ruler'. The Arabic may go back to Aramaic shultana 'power' (as Klein suggests). It first meant 'authority' and then became a ruler's title.",
+  "q": {
+   "ru": "Какое значение имело арабское sulṭān до того, как стать титулом?",
+   "en": "What did Arabic sulṭān mean before becoming a title?"
+  },
+  "a": "سلطة sulṭa (власть) / sulṭa (authority)",
+  "w": [
+   "حرب ḥarb (война) / ḥarb (war)",
+   "مال māl (богатство) / māl (wealth)",
+   "نهر nahr (река) / nahr (river)"
+  ],
+  "origin": "Арабский · Arabic",
+  "path": [
+   "shultana|власть · power",
+   "sulṭān|власть, правитель · authority",
+   "sultan"
+  ],
+  "fact": {
+   "ru": "Титул значил «власть» ещё до того, как стал именем должности.",
+   "en": "The title meant 'authority' before it named a post."
+  }
+ },
+ {
+  "word": "sofa",
+  "ru": "Sofa — из арабского صُفَّة (ṣuffa) «скамья, возвышение», пришедшего через турецкий. В Европе так стали называть мягкую скамью с подушками.",
+  "en": "Sofa is from Arabic صُفَّة (ṣuffa) 'bench, raised platform', arriving via Turkish. In Europe it came to mean a cushioned seat.",
+  "q": {
+   "ru": "Что значило арабское ṣuffa, давшее sofa?",
+   "en": "What did Arabic ṣuffa, the source of sofa, mean?"
+  },
+  "a": "ṣuffa (скамья) / ṣuffa (bench)",
+  "w": [
+   "bayt (дом) / bayt (house)",
+   "qalʿa (крепость) / qalʿa (fortress)",
+   "ḥawḍ (бассейн) / ḥawḍ (basin)"
+  ],
+  "origin": "Арабский · Arabic",
+  "path": [
+   "ṣuffa|скамья · bench",
+   "sofa|мягкая скамья · cushioned seat",
+   "sofa"
+  ],
+  "fact": {
+   "ru": "Диван в Европе — потомок восточной скамьи.",
+   "en": "The European sofa descends from an Eastern bench."
+  }
+ },
+ {
+  "word": "guru",
+  "ru": "Guru — санскритское गुरु (guru) «тяжёлый, весомый; уважаемый», затем «наставник, учитель». Слово родственно латинскому gravis «тяжёлый».",
+  "en": "Guru is Sanskrit गुरु (guru) 'heavy, weighty; venerable', then 'teacher, mentor'. It is cognate with Latin gravis 'heavy'.",
+  "q": {
+   "ru": "Какое прямое значение имеет санскритское guru?",
+   "en": "What is the literal meaning of Sanskrit guru?"
+  },
+  "a": "guru (тяжёлый) / guru (heavy)",
+  "w": [
+   "laghu (лёгкий) / laghu (light)",
+   "dūra (далёкий) / dūra (far)",
+   "śukra (светлый) / śukra (bright)"
+  ],
+  "origin": "Санскрит · Sanskrit",
+  "path": [
+   "guru|тяжёлый · heavy",
+   "guru|учитель · teacher",
+   "guru"
+  ],
+  "fact": {
+   "ru": "Guru и латинское gravis («тяжёлый») — дальние родственники.",
+   "en": "Guru and Latin gravis 'heavy' are distant kin."
+  }
+ },
+ {
+  "word": "аксакал",
+  "ru": "Слово «аксакал» пришло из тюркских языков (казахское ақсақал) и состоит из ақ «белый» и сақал «борода». Это почтительное название старейшины, «седобородого».",
+  "en": "Aksakal comes from Turkic (Kazakh ақсақал) and consists of ақ 'white' and сақал 'beard'. It is a respectful name for an elder, a 'white-bearded' one.",
+  "q": {
+   "ru": "Что означает ақ в слове ақсақал?",
+   "en": "What does ақ mean in ақсақал?"
+  },
+  "a": "ақ (белый) / ақ (white)",
+  "w": [
+   "алтын (золото) / алтын (gold)",
+   "үлкен (большой) / үлкен (big)",
+   "жаңа (новый) / жаңа (new)"
+  ],
+  "origin": "Казахский · Kazakh",
+  "path": [
+   "ақ|белый · white",
+   "сақал|борода · beard",
+   "аксакал"
+  ],
+  "fact": {
+   "ru": "Белая борода у казахов — знак мудрости и уважения.",
+   "en": "A white beard is a mark of wisdom and respect."
+  }
  }
 ]

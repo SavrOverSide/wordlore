@@ -26,6 +26,40 @@ def font(name: str, size: int) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(str(FONTS / f"Inter-{name}.otf"), size)
 
 
+def is_cjk(ch: str) -> bool:
+    o = ord(ch)
+    return 0x1100 <= o <= 0x11FF or 0x3000 <= o <= 0x9FFF or 0xAC00 <= o <= 0xD7AF
+
+
+def cjk_font(size: int) -> ImageFont.FreeTypeFont:
+    return ImageFont.truetype(str(FONTS / "CJK-Bold-subset.otf"), size)
+
+
+def runs(text: str):
+    """Split text into (is_cjk, chunk) runs so each run can use the right font."""
+    out = []
+    for ch in text:
+        c = is_cjk(ch)
+        if out and out[-1][0] == c:
+            out[-1][1] += ch
+        else:
+            out.append([c, ch])
+    return out
+
+
+def mixed_width(d, text: str, weight: str, size: int) -> float:
+    return sum(d.textlength(t, font=cjk_font(size) if c else font(weight, size)) for c, t in runs(text))
+
+
+def draw_mixed(d, xy, text: str, weight: str, size: int, fill, anchor="lm") -> None:
+    """Draws text that may mix Latin/Cyrillic (Inter) with CJK/Hangul (bundled subset font)."""
+    x, y = xy
+    for c, t in runs(text):
+        f = cjk_font(size) if c else font(weight, size)
+        d.text((x, y), t, font=f, fill=fill, anchor=anchor)
+        x += d.textlength(t, font=f)
+
+
 def first_sentence(text: str, limit: int = 150) -> str:
     s = re.split(r"(?<=[.!?])\s", text.strip(), maxsplit=1)[0]
     return s if len(s) <= limit else s[: limit - 1].rsplit(" ", 1)[0] + "…"
@@ -147,9 +181,9 @@ def render(word: str, ru: str, en: str, origin: str = "", path=(), handle: str =
             last = i == len(nodes) - 1
             r = 15 if last else 11
             d.ellipse((x - r, cy + 14 - r, x + r, cy + 14 + r), fill=A if last else top + (255,), outline=A, width=4)
-            d.text((x + 52, cy + 14), term, font=font("ExtraBold" if last else "Bold", 40), fill=A if last else white, anchor="lm")
+            draw_mixed(d, (x + 52, cy + 14), term, "ExtraBold" if last else "Bold", 40, A if last else white)
             if gloss and not last:
-                tx = x + 52 + d.textlength(term, font=font("Bold", 40)) + 22
+                tx = x + 52 + mixed_width(d, term, "Bold", 40) + 22
                 gf = font("Regular", 27)
                 limit = W - PAD - 30
                 if tx + d.textlength(gloss, font=gf) > limit:  # keep only the first language if too long

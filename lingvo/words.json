@@ -12,7 +12,17 @@
    "solus (один) / solus (alone)",
    "salire (прыгать) / salire (to jump)",
    "salus (здоровье) / salus (health)"
-  ]
+  ],
+  "origin": "Латынь · Latin",
+  "path": [
+   "sal|соль · salt",
+   "salarium|жалованье · allowance",
+   "salary"
+  ],
+  "fact": {
+   "ru": "Возможно, от «соли»: так объясняют жалованье римских солдат.",
+   "en": "Maybe from 'salt': a popular story about Roman soldiers' pay."
+  }
  },
  {
   "word": "вокзал",
@@ -27,7 +37,17 @@
    "нем. Wagensaal / German Wagensaal",
    "фр. voix sale / French voix sale",
    "лат. vocare / Latin vocare"
-  ]
+  ],
+  "origin": "Английский · English",
+  "path": [
+   "Vauxhall|сад в Лондоне · London garden",
+   "Павловский вокзал|концертный павильон · concert hall",
+   "вокзал"
+  ],
+  "fact": {
+   "ru": "Назван в честь лондонского увеселительного сада Vauxhall.",
+   "en": "Named after London's Vauxhall pleasure garden."
+  }
  },
  {
   "word": "robot",
@@ -42,7 +62,17 @@
    "машина / machine",
    "железо / iron",
    "слуга-кукла / puppet servant"
-  ]
+  ],
+  "origin": "Чешский · Czech",
+  "path": [
+   "robota|подневольный труд · forced labour",
+   "R.U.R. (1920)|пьеса Чапека · Čapek's play",
+   "robot"
+  ],
+  "fact": {
+   "ru": "Слово придумал Йозеф Чапек, а прославил его брат Карел.",
+   "en": "Coined by Josef Čapek, made famous by his brother Karel."
+  }
  },
  {
   "word": "шахматы",
@@ -57,7 +87,17 @@
    "доска / board",
    "армия / army",
    "игра / game"
-  ]
+  ],
+  "origin": "Персидский · Persian",
+  "path": [
+   "shāh māt|король беспомощен · the king is helpless",
+   "Turkic|тюркские языки · intermediary",
+   "шахматы"
+  ],
+  "fact": {
+   "ru": "«Шах мат»: король беспомощен.",
+   "en": "'Shāh māt': the king is helpless."
+  }
  },
  {
   "word": "muscle",
@@ -72,7 +112,17 @@
    "сила / strength",
    "узел / knot",
    "рука / arm"
-  ]
+  ],
+  "origin": "Латынь · Latin",
+  "path": [
+   "mus|мышь · mouse",
+   "musculus|мышонок · little mouse",
+   "muscle"
+  ],
+  "fact": {
+   "ru": "Мышца — это «мышонок», бегающий под кожей.",
+   "en": "A muscle is a 'little mouse' running under the skin."
+  }
  },
  {
   "word": "караоке",
@@ -87,7 +137,17 @@
    "голос / voice",
    "песня / song",
    "весёлый / merry"
-  ]
+  ],
+  "origin": "Японский · Japanese",
+  "path": [
+   "kara + oke|пустой + оркестр · empty + orchestra",
+   "karaoke|пустой оркестр · empty orchestra",
+   "караоке"
+  ],
+  "fact": {
+   "ru": "Дословно «пустой оркестр»: музыка без голоса.",
+   "en": "Literally 'empty orchestra': music without the singer."
+  }
  },
  {
   "word": "nerd",
@@ -102,7 +162,17 @@
    "в MIT / at MIT",
    "в журнале Mad / in Mad magazine",
    "в фильме 1980-х / in a 1980s film"
-  ]
+  ],
+  "origin": "Английский · English",
+  "path": [
+   "If I Ran the Zoo|1950, Dr. Seuss",
+   "сленг Детройта, 1951 · Detroit slang",
+   "nerd"
+  ],
+  "fact": {
+   "ru": "Впервые встречается как зверёк в книге доктора Сьюза, 1950.",
+   "en": "First seen as a creature in a Dr. Seuss book, 1950."
+  }
  },
  {
   "word": "богатырь",
@@ -117,7 +187,17 @@
    "богатый / rich",
    "бог / god",
    "бодрый / brisk"
-  ]
+  ],
+  "origin": "Тюрко-монгольский · Turkic-Mongolic",
+  "path": [
+   "baatar / batyr|герой · hero",
+   "Улан-Батор|красный богатырь · red hero",
+   "богатырь"
+  ],
+  "fact": {
+   "ru": "Родня монгольскому baatar: Улан-Батор значит «красный богатырь».",
+   "en": "Related to Mongolian baatar: Ulaanbaatar means 'red hero'."
+  }
  },
  {
   "word": "avatar",
@@ -132,7 +212,17 @@
    "образ / image",
    "маска / mask",
    "двойник / double"
-  ]
+  ],
+  "origin": "Санскрит · Sanskrit",
+  "path": [
+   "avatāra|нисхождение · descent",
+   "Ultima IV, «Лавина»|игры и сети · games and net",
+   "avatar"
+  ],
+  "fact": {
+   "ru": "Из санскрита: земное воплощение бога.",
+   "en": "From Sanskrit: a god's incarnation on earth."
+  }
  },
  {
   "word": "хулиган",
@@ -147,7 +237,17 @@
    "немецкий / German",
    "французский / French",
    "польский / Polish"
-  ]
+  ],
+  "origin": "Английский · English",
+  "path": [
+   "Houlihan?|ирландская семья · Irish family",
+   "hooligan|Лондон, 1890-е · London, 1890s",
+   "хулиган"
+  ],
+  "fact": {
+   "ru": "Возможно, от фамилии ирландской семьи Houlihan, но это не доказано.",
+   "en": "Possibly from the Irish Houlihan family, though unproven."
+  }
  },
  {
   "word": "algorithm",
@@ -162,7 +262,17 @@
    "греч. arithmos / Greek arithmos",
    "лат. algor / Latin algor",
    "араб. «логика» / Arabic for logic"
-  ]
+  ],
+  "origin": "Персидский · Persian",
+  "path": [
+   "al-Khwarizmi|математик IX века · 9th-c. mathematician",
+   "Algoritmi|латинизация имени · Latinised name",
+   "algorithm"
+  ],
+  "fact": {
+   "ru": "От имени аль-Хорезми, а «алгебра» — от названия его книги.",
+   "en": "From al-Khwarizmi; 'algebra' comes from his book's title."
+  }
  },
  {
   "word": "самурай",
@@ -177,7 +287,17 @@
    "меч / sword",
    "воин / warrior",
    "благородный / noble"
-  ]
+  ],
+  "origin": "Японский · Japanese",
+  "path": [
+   "saburau|служить · to serve",
+   "samurai|слуга, не воин · attendant, not warrior",
+   "самурай"
+  ],
+  "fact": {
+   "ru": "Первоначально «слуга», а не «воин».",
+   "en": "Originally 'one who serves', not 'warrior'."
+  }
  },
  {
   "word": "galaxy",
@@ -192,7 +312,17 @@
    "звезда / star",
    "круг / circle",
    "небо / sky"
-  ]
+  ],
+  "origin": "Греческий · Greek",
+  "path": [
+   "gala|молоко · milk",
+   "galaxias kyklos|молочный круг · milky circle",
+   "galaxy"
+  ],
+  "fact": {
+   "ru": "Дословно «молочный круг»: так назвали Млечный Путь.",
+   "en": "Literally 'milky circle': the Milky Way."
+  }
  },
  {
   "word": "кимоно",
@@ -207,7 +337,17 @@
    "шёлк / silk",
    "пояс / belt",
    "праздничный / festive"
-  ]
+  ],
+  "origin": "Японский · Japanese",
+  "path": [
+   "ki + mono|носить + вещь · wear + thing",
+   "kimono|вещь для ношения · a thing to wear",
+   "кимоно"
+  ],
+  "fact": {
+   "ru": "Просто «вещь для ношения».",
+   "en": "Simply 'a thing to wear'."
+  }
  },
  {
   "word": "punk",
@@ -222,6 +362,16 @@
    "бунтарь / rebel",
    "моряк / sailor",
    "шут / jester"
-  ]
+  ],
+  "origin": "Английский · English",
+  "path": [
+   "punk, 1590-е|никчёмный человек · worthless",
+   "tinder|гнилая растопка · rotten kindling",
+   "punk"
+  ],
+  "fact": {
+   "ru": "Раньше так называли гнилую растопку.",
+   "en": "It once meant rotten tinder wood."
+  }
  }
 ]

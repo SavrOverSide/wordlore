@@ -54,13 +54,14 @@ def card(w: dict, lang: str) -> str:
 
 
 @functools.lru_cache(maxsize=64)
-def _image(word: str, ru: str, en: str) -> bytes:
-    return render(word, ru, en)
+def _image(word: str, ru: str, en: str, origin: str, path: tuple) -> bytes:
+    return render(word, ru, en, origin, path)
 
 
 async def photo(w: dict) -> BufferedInputFile:
     """Picture card for a word, rendered off the event loop and cached."""
-    data = await asyncio.to_thread(_image, w["word"], w["ru"], w["en"])
+    fact = w.get("fact") or {"ru": w["ru"], "en": w["en"]}
+    data = await asyncio.to_thread(_image, w["word"], fact["ru"], fact["en"], w.get("origin", ""), tuple(w.get("path", ())))
     return BufferedInputFile(data, filename=f"{w['word']}.jpg")
 
 

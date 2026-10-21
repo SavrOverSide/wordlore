@@ -105,7 +105,38 @@ class StoreTests(unittest.TestCase):
     def test_payments_are_idempotent(self):
         self.assertTrue(self.s.record_payment("c1", 1, 99, "premium_30"))
         self.assertFalse(self.s.record_payment("c1", 1, 99, "premium_30"))
-        self.assertIn("stars: 99", self.s.stats_text())
+        self.assertIn("99 ⭐ всего", self.s.stats_text())
+
+    def test_dashboard_numbers(self):
+        s = self.s
+        for uid in (1, 2, 3):
+            s.ensure_user(uid)
+        s.ensure_user(1)                                  # repeated activity on one day counts once
+        s.record_payment("a", 1, 99, "premium_30")
+        s.record_payment("b", 1, 799, "premium_365")
+        s.record_payment("c", 2, 25, "pack_50")
+        s.add_referral(3, 1)
+        s.set_sub(2, True)
+        text = s.stats_text()
+        self.assertIn("Людей всего: 3", text)
+        self.assertIn("Новых: сегодня 3", text)
+        self.assertIn("Активных: сегодня 3", text)
+        self.assertIn("923 ⭐ всего", text)
+        self.assertIn("покупателей: 2 (66.7% от всех)", text)
+        self.assertIn("premium_365: 1 шт, 799 ⭐", text)
+        self.assertIn("Подписчиков на рассылку: 1", text)
+        self.assertIn("Приглашений по ссылкам: 1", text)
+
+    def test_day1_return_rate(self):
+        s = self.s
+        yesterday = int(time.time()) - 86400
+        for uid in (10, 11):
+            s.ensure_user(uid)
+            s.conn.execute("UPDATE users SET created = ? WHERE id = ?", (yesterday, uid))
+        s.conn.commit()                                   # both signed up yesterday; only 10 shows up today
+        s.conn.execute("DELETE FROM activity WHERE user_id = 11")
+        s.conn.commit()
+        self.assertIn("1 из 2", s.stats_text())
 
     def test_migrates_old_database(self):
         import sqlite3

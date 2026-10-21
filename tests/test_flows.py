@@ -39,14 +39,18 @@ class WordloreFlows(unittest.IsolatedAsyncioTestCase):
     async def test_start_shows_menu_and_all_buttons_work(self):
         c = chat(1001)
         await c.say("/start")
-        self.assertIn("Wordlore", c.last()["text"])
+        self.assertIn("Wordlore", c.log[0]["text"])
+        self.assertEqual(c.last()["kind"], "photo")          # a new user sees today's word right away
         self.assertGreaterEqual(len(c.buttons()), 8)
+        n = len(c.log)
+        await c.say("/start")                               # a returning user just gets the menu
+        self.assertEqual(len(c.log), n + 1)
         assert_buttons_routable(self, c)
 
     async def test_english_user_gets_english(self):
         c = chat(1002, "en")
         await c.say("/start")
-        self.assertIn("stories behind words", c.last()["text"])
+        self.assertIn("stories behind words", c.log[0]["text"])
         self.assertEqual(store.get_lang(1002), "en")
         await c.say("/lang")
         self.assertEqual(store.get_lang(1002), "ru")

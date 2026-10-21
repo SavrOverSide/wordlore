@@ -150,6 +150,8 @@ async def start(m: Message):
         store.set_sub(user.id, True)
         return await m.answer(tr(user, "sub_on"), reply_markup=menu(user))
     await m.answer(tr(user, "welcome"), parse_mode="HTML", reply_markup=menu(user))
+    if created:  # show the product right away: today's word
+        await send_word(m, user, word_of_day())
 
 
 @router.message(Command("help"))

@@ -458,6 +458,26 @@ class Collections(unittest.IsolatedAsyncioTestCase):
         await c.press("c:antique")
         self.assertEqual(c.last()["kind"], "photo")
 
+    async def test_collection_quiz_uses_only_words_of_that_collection(self):
+        from lingvo.bot import ROUNDS, WORDS
+        from lingvo.collections import FREE_COLLECTION, members
+        c = chat(9405)
+        await c.press(f"c:{FREE_COLLECTION}")
+        self.assertIn(f"cq:{FREE_COLLECTION}", [b.callback_data for b in c.buttons()])
+        assert_buttons_routable(self, c)
+        await c.press(f"cq:{FREE_COLLECTION}")
+        self.assertIn("1/5", c.last()["text"])
+        self.assertTrue(set(ROUNDS[9405]["qs"]) <= set(members(WORDS, FREE_COLLECTION)))
+        self.assertEqual(len(set(ROUNDS[9405]["qs"])), 5)
+        # a free user used the daily round on it; a locked collection quiz does nothing for them
+        d = chat(9406)
+        before = len(d.log)
+        await d.press("cq:antique")
+        self.assertEqual(len(d.log), before)
+        store.add_premium(9406, 30)
+        await d.press("cq:antique")
+        self.assertTrue(set(ROUNDS[9406]["qs"]) <= set(members(WORDS, "antique")))
+
     async def test_bad_collection_key_ignored(self):
         c = chat(9403)
         before = len(c.log)

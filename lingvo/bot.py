@@ -109,6 +109,7 @@ def word_keyboard(user, w: dict, link: str, coll: str = "") -> InlineKeyboardMar
     ]
     if coll:
         rows.insert(1, [button(t["btn_more_coll"], f"c:{coll}"), button(t["btn_all_coll"], "m:coll")])
+        rows[2] = [button(t["btn_coll_quiz"], f"cq:{coll}")]
     return keyboard(*rows)
 
 
@@ -234,6 +235,18 @@ async def open_collection(c: CallbackQuery):
     await c.answer()
 
 
+@router.callback_query(F.data.startswith("cq:"))
+async def collection_quiz(c: CallbackQuery):
+    """A 5-question round with words from one collection (uses the same daily free round / premium as any round)."""
+    user, key = c.from_user, c.data[3:]
+    ids = members(WORDS, key) if key in all_keys() else []
+    if len(ids) < QUESTIONS or not can_open(user, key):
+        return await c.answer()
+    store.ensure_user(user.id)
+    await start_round(c.message, user, pool=ids)
+    await c.answer()
+
+
 @router.message(Command("random"))
 async def random_cmd(m: Message):
     user = m.from_user
@@ -283,7 +296,7 @@ async def paywall(m: Message, user) -> None:
                    reply_markup=keyboard([button(t["btn_premium"], "m:premium")], [button(t["btn_invite"], "m:invite")]))
 
 
-async def start_round(m: Message, user) -> None:
+async def start_round(m: Message, user, pool=None) -> None:
     open_round = ROUNDS.get(user.id)
     if open_round and not open_round["answered"] and time.time() - open_round["t"] < 3600:
         text, markup = question(user)  # resume the unfinished round instead of spending another attempt
@@ -293,7 +306,7 @@ async def start_round(m: Message, user) -> None:
     now = time.time()
     for uid in [u for u, r in ROUNDS.items() if now - r["t"] > 3600]:
         del ROUNDS[uid]
-    ROUNDS[user.id] = {"qs": random.sample(range(len(WORDS)), QUESTIONS), "i": 0, "score": 0, "answered": False, "t": now}
+    ROUNDS[user.id] = {"qs": random.sample(list(pool) if pool else range(len(WORDS)), QUESTIONS), "i": 0, "score": 0, "answered": False, "t": now}
     text, markup = question(user)
     await m.answer(text, parse_mode="HTML", reply_markup=markup)
 

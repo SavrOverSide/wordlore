@@ -66,6 +66,8 @@ T = {
         "duel_notice": "⚔️ {name} сыграл твой вызов: у него {theirs}/{total}, у тебя {mine}/{total}. {verdict}",
         "verdict_win": "Ты впереди!", "verdict_draw": "Ничья.", "verdict_lose": "Он тебя обошёл, пора на реванш.",
         "friend": "друг",
+        "week_active": "📊 <b>Твоя неделя в Wordlore</b>\n\nОтветов: {answered}, из них верных: {correct}\nРаундов: {rounds}\n🔥 Серия: {streak} дн.\n\nНовая неделя, новые слова. Сыграем?",
+        "week_idle": "👋 На этой неделе викторина ждала, а ты не заходил. Один раунд занимает минуту, а слово дня ты всё равно получаешь каждое утро.",
         "invite_welcome": "🎁 Ты пришёл по приглашению: +{c} бонусный раунд викторины.",
         "premium": ("⭐ <b>Wordlore Премиум</b>\n\n• Безлимитные раунды викторины\n• Весь архив: любое слово из {n} через /random\n"
                     "• Сохранённые слова без лимита\n• Серия переживёт один пропущенный день\n\n{status}"),
@@ -118,6 +120,8 @@ T = {
         "duel_notice": "⚔️ {name} played your challenge: {theirs}/{total} against your {mine}/{total}. {verdict}",
         "verdict_win": "You're ahead!", "verdict_draw": "A draw.", "verdict_lose": "They beat you, time for a rematch.",
         "friend": "a friend",
+        "week_active": "📊 <b>Your week in Wordlore</b>\n\nAnswers: {answered}, correct: {correct}\nRounds: {rounds}\n🔥 Streak: {streak} days\n\nNew week, new words. Shall we play?",
+        "week_idle": "👋 The quiz waited all week and you didn't drop by. A round takes a minute, and you still get a word every morning.",
         "invite_welcome": "🎁 You joined by invitation: +{c} bonus quiz round.",
         "premium": ("⭐ <b>Wordlore Premium</b>\n\n• Unlimited quiz rounds\n• Full archive: any of {n} words via /random\n"
                     "• Unlimited saved words\n• Your streak survives one missed day\n\n{status}"),

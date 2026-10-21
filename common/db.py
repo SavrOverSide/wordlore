@@ -66,6 +66,9 @@ class Store:
             CREATE TABLE IF NOT EXISTS duel_plays (
                 code TEXT, user_id INTEGER, name TEXT, score INTEGER, at INTEGER, PRIMARY KEY (code, user_id)
             );
+            CREATE TABLE IF NOT EXISTS week_snap (
+                user_id INTEGER PRIMARY KEY, correct INTEGER, answered INTEGER, rounds INTEGER
+            );
             CREATE TABLE IF NOT EXISTS subs (
                 user_id INTEGER PRIMARY KEY,
                 at INTEGER
@@ -234,6 +237,16 @@ class Store:
     def delete_saved(self, uid: int, key: str) -> None:
         self.conn.execute("DELETE FROM saved WHERE user_id = ? AND key = ?", (uid, key))
         self.conn.commit()
+
+    # ---- weekly summary: what changed since the previous one --------------------------------------
+    def week_delta(self, uid: int) -> dict:
+        """Stats gained since the last call, then moves the snapshot forward."""
+        now = self.user_stats(uid)
+        row = self.conn.execute("SELECT correct, answered, rounds FROM week_snap WHERE user_id = ?", (uid,)).fetchone()
+        before = dict(zip(("correct", "answered", "rounds"), row or (0, 0, 0)))
+        self.conn.execute("INSERT OR REPLACE INTO week_snap VALUES (?, ?, ?, ?)", (uid, now["correct"], now["answered"], now["rounds"]))
+        self.conn.commit()
+        return {k: now[k] - before[k] for k in now}
 
     # ---- duels -------------------------------------------------------------------------------
     def create_duel(self, creator: int, name: str, qs: list, score: int) -> str:

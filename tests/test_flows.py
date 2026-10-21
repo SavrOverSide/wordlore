@@ -318,6 +318,49 @@ class Duels(unittest.IsolatedAsyncioTestCase):
         self.assertIn("/quiz", c.last()["text"])
 
 
+class Weekly(unittest.IsolatedAsyncioTestCase):
+    async def test_weekly_summary_active_idle_blocked(self):
+        import run
+        from datetime import datetime as real_dt
+        for uid in (9001, 9002, 9003):
+            store.ensure_user(uid)
+            store.set_sub(uid, True)
+        store.add_answer(9001, True)
+        store.add_answer(9001, False)
+        store.finish_round(9001)
+        store.streak_hit(9001)
+        bot = Bot("x")
+        bot.fail_for = {9003}
+
+        class Sunday:
+            @staticmethod
+            def now(tz):
+                return real_dt(2026, 10, 25, 18, 0, tzinfo=tz)  # a Sunday
+        real, run.datetime = run.datetime, Sunday
+        try:
+            await run.weekly_summary(bot)
+        finally:
+            run.datetime = real
+        by = {s["chat_id"]: s["text"] for s in bot.sent}
+        self.assertIn("Ответов: 2", by[9001])
+        self.assertIn("не заходил", by[9002])
+        self.assertNotIn(9003, by)
+        self.assertFalse(store.is_sub(9003))
+        # the numbers are a delta: the next summary starts from zero
+        bot2 = Bot("x")
+        run.datetime = Sunday
+        try:
+            await run.weekly_summary(bot2)
+        finally:
+            run.datetime = real
+        self.assertIn("не заходил", {s["chat_id"]: s["text"] for s in bot2.sent}[9001])
+        # and nothing is sent on other days
+        bot3 = Bot("x")
+        await run.weekly_summary(bot3) if real.now(run.TZ).weekday() != 6 else None
+        if real.now(run.TZ).weekday() != 6:
+            self.assertEqual(bot3.sent, [])
+
+
 class DailyPost(unittest.IsolatedAsyncioTestCase):
     async def test_post_word_to_channel_and_subscribers(self):
         import run

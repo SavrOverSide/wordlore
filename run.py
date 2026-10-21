@@ -6,7 +6,9 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import BufferedInputFile, InlineKeyboardButton, InlineKeyboardMarkup
 
 from common.config import env
-from common.daily import every_day
+from datetime import datetime
+
+from common.daily import TZ, every_day
 from common.profile import setup_profile
 from common.growth import broadcast, promo, ref_link, share_url
 from lingvo.bot import WORDS, esc, router, store, word_index, word_of_day, word_photo
@@ -48,6 +50,26 @@ async def post_word(bot: Bot) -> None:
     logging.info("daily DM: %s subscribers, %s dropped", len(store.subs()) + len(dead), len(dead))
 
 
+async def weekly_summary(bot: Bot) -> None:
+    """Sundays: each daily-DM subscriber gets their week in numbers (or a gentle nudge if they were away)."""
+    if datetime.now(TZ).weekday() != 6:
+        return
+
+    async def send_week(uid: int) -> None:
+        lg = store.get_lang(uid) or "ru"
+        t = T[lg]
+        delta = store.week_delta(uid)
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=t["btn_quiz"], callback_data="m:quiz")]])
+        if delta["answered"] == 0:
+            await bot.send_message(uid, t["week_idle"], reply_markup=kb)
+        else:
+            streak = store.streak(uid)[0]
+            await bot.send_message(uid, t["week_active"].format(streak=streak, **delta), parse_mode="HTML", reply_markup=kb)
+
+    for uid in await broadcast(store.subs(), send_week):
+        store.set_sub(uid, False)
+
+
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
     bot = Bot(env("BOT_TOKEN"))
@@ -57,6 +79,7 @@ async def main() -> None:
     await asyncio.gather(
         dp.start_polling(bot),
         every_day(env("POST_TIME", "10:00"), lambda: post_word(bot)),
+        every_day("18:00", lambda: weekly_summary(bot)),
     )
 
 

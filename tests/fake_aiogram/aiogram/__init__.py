@@ -51,6 +51,11 @@ class _TruthyField(_Pred):
     def startswith(self, prefix):
         return self._field.startswith(prefix)
 
+    def __eq__(self, other):  # F.data == "x"
+        return self._field == other
+
+    __hash__ = object.__hash__
+
     def __getattr__(self, name):
         return getattr(self._field, name)
 

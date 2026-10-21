@@ -75,3 +75,8 @@ class PreCheckoutQuery(_Obj):
 class BotCommand:
     def __init__(self, command, description):
         self.command, self.description = command, description
+
+
+class LinkPreviewOptions(_Obj):
+    def __init__(self, **kw):
+        self.__dict__.update(kw)

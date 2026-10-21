@@ -1,10 +1,10 @@
 """What people see before they press START, and the command menu."""
 COMMANDS = {
     "ru": [("start", "Начать"), ("word", "Слово дня"), ("quiz", "Викторина на 5 вопросов"), ("me", "Мой ранг и серия"),
-           ("saved", "Мои слова"), ("random", "Случайное слово (премиум)"), ("invite", "Позвать друга, получить раунды"),
+           ("collections", "Коллекции слов"), ("saved", "Мои слова"), ("random", "Случайное слово (премиум)"), ("invite", "Позвать друга, получить раунды"),
            ("sub", "Слово дня в личку: вкл/выкл"), ("premium", "Премиум"), ("lang", "English / Русский")],
     "en": [("start", "Start"), ("word", "Word of the day"), ("quiz", "5-question quiz"), ("me", "My rank and streak"),
-           ("saved", "My saved words"), ("random", "Random word (premium)"), ("invite", "Invite a friend, get rounds"),
+           ("collections", "Word collections"), ("saved", "My saved words"), ("random", "Random word (premium)"), ("invite", "Invite a friend, get rounds"),
            ("sub", "Daily word in DM: on/off"), ("premium", "Premium"), ("lang", "English / Русский")],
 }
 DESCRIPTION = {

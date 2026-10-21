@@ -20,6 +20,7 @@ from common.daily import TZ
 from common.growth import parse_ref, ref_link, share_url, start_arg
 from common.stars import payments_router, send_invoice
 from .card import render, render_result
+from .collections import FREE_COLLECTION, all_keys, members, title as coll_title
 from .texts import (FREE_ROUNDS, FREE_SAVED, INVITEE_BONUS, INVITER_BONUS, PRODUCT_DAYS, PRODUCTS, QUESTIONS, T, rank_for)
 
 WORDS = json.loads((Path(__file__).parent / "words.json").read_text(encoding="utf-8"))
@@ -77,8 +78,9 @@ def menu(user) -> InlineKeyboardMarkup:
     return keyboard(
         [button(t["btn_quiz"], "m:quiz"), button(t["btn_word"], "m:word")],
         [button(t["btn_me"], "m:me"), button(t["btn_saved"], "m:saved")],
-        [button(t["btn_invite"], "m:invite"), button(t["btn_premium"], "m:premium")],
-        [button(sub, "m:sub"), button(t["btn_lang"], "m:lang")],
+        [button(t["btn_coll"], "m:coll"), button(t["btn_invite"], "m:invite")],
+        [button(t["btn_premium"], "m:premium"), button(sub, "m:sub")],
+        [button(t["btn_lang"], "m:lang")],
     )
 
 
@@ -98,20 +100,23 @@ async def bot_username(bot) -> str:
     return (await bot.me()).username
 
 
-def word_keyboard(user, w: dict, link: str) -> InlineKeyboardMarkup:
+def word_keyboard(user, w: dict, link: str, coll: str = "") -> InlineKeyboardMarkup:
     t = T[lang(user)]
     text = t["share_word"].format(word=w["word"])
-    return keyboard(
+    rows = [
         [button(t["btn_save"], f"sv:{word_index(w)}"), button(t["btn_share"], url=share_url(link, text))],
         [button(t["btn_quiz"], "m:quiz")],
-    )
+    ]
+    if coll:
+        rows.insert(1, [button(t["btn_more_coll"], f"c:{coll}"), button(t["btn_all_coll"], "m:coll")])
+    return keyboard(*rows)
 
 
-async def send_word(m: Message, user, w: dict) -> None:
+async def send_word(m: Message, user, w: dict, coll: str = "") -> None:
     lg = lang(user)
     link = ref_link(await bot_username(m.bot), user.id)
     await m.answer_photo(await word_photo(w), caption=card(w, lg)[:1000], parse_mode="HTML",
-                         reply_markup=word_keyboard(user, w, link))
+                         reply_markup=word_keyboard(user, w, link, coll))
 
 
 # ---------------------------------------------------------------------------------------------
@@ -183,6 +188,50 @@ async def me_cmd(m: Message):
 @router.message(Command("word"))
 async def word_cmd(m: Message):
     await send_word(m, m.from_user, word_of_day())
+
+
+COLL_LAST: dict = {}   # (user id, collection) -> index of the word shown last, to avoid showing it twice in a row
+
+
+def can_open(user, key: str) -> bool:
+    return key == FREE_COLLECTION or store.is_premium(user.id)
+
+
+@router.message(Command("collections"))
+async def collections_cmd(m: Message):
+    await show_collections(m, m.from_user)
+
+
+async def show_collections(m: Message, user) -> None:
+    lg = lang(user)
+    free = coll_title(FREE_COLLECTION, lg)
+    rows = []
+    for key in all_keys():
+        n = len(members(WORDS, key))
+        if n:
+            lock = "" if can_open(user, key) else "🔒 "
+            rows.append([button(f"{lock}{coll_title(key, lg)} · {n}", f"c:{key}")])
+    await m.answer(T[lg]["coll_title"].format(free=free), parse_mode="HTML", reply_markup=keyboard(*rows))
+
+
+@router.callback_query(F.data.startswith("c:"))
+async def open_collection(c: CallbackQuery):
+    user, key = c.from_user, c.data[2:]
+    ids = members(WORDS, key) if key in all_keys() else []
+    if not ids:
+        return await c.answer()
+    store.ensure_user(user.id)
+    if not can_open(user, key):
+        t = T[lang(user)]
+        await c.message.answer(t["coll_locked"].format(free=coll_title(FREE_COLLECTION, lang(user))), reply_markup=keyboard(
+            [button(coll_title(FREE_COLLECTION, lang(user)), f"c:{FREE_COLLECTION}")], [button(t["btn_premium"], "m:premium")]))
+        return await c.answer()
+    last = COLL_LAST.get((user.id, key))
+    choices = [i for i in ids if i != last] or ids
+    pick_i = random.choice(choices)
+    COLL_LAST[(user.id, key)] = pick_i
+    await send_word(c.message, user, WORDS[pick_i], coll=key)
+    await c.answer()
 
 
 @router.message(Command("random"))
@@ -459,6 +508,8 @@ async def menu_button(c: CallbackQuery):
         await show_saved(m, user)
     elif action == "invite":
         await show_invite(m, user)
+    elif action == "coll":
+        await show_collections(m, user)
     elif action == "premium":
         await show_premium(m, user)
     elif action == "duel":

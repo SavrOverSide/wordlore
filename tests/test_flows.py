@@ -426,6 +426,52 @@ class Search(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(d.log), n)
 
 
+class Collections(unittest.IsolatedAsyncioTestCase):
+    async def test_every_word_is_in_exactly_one_collection(self):
+        from lingvo.bot import WORDS
+        from lingvo.collections import all_keys, members
+        seen = []
+        for k in all_keys():
+            seen += members(WORDS, k)
+        self.assertEqual(sorted(seen), list(range(len(WORDS))))
+
+    async def test_free_collection_opens_and_cycles_without_repeats(self):
+        from lingvo.collections import FREE_COLLECTION
+        c = chat(9401)
+        await c.say("/collections")
+        self.assertIn("🔒", " ".join(b.text for b in c.buttons()))
+        assert_buttons_routable(self, c)
+        shown = []
+        for _ in range(6):
+            await c.press(f"c:{FREE_COLLECTION}")
+            self.assertEqual(c.last()["kind"], "photo")
+            shown.append(c.last()["caption"])
+        self.assertTrue(all(a != b for a, b in zip(shown, shown[1:])))     # never the same word twice in a row
+        assert_buttons_routable(self, c)
+
+    async def test_locked_collection_shows_upsell_then_unlocks_with_premium(self):
+        c = chat(9402)
+        await c.press("c:antique")
+        self.assertIn("🔒", c.last()["text"])
+        self.assertIn("m:premium", [b.callback_data for b in c.buttons()])
+        store.add_premium(9402, 30)
+        await c.press("c:antique")
+        self.assertEqual(c.last()["kind"], "photo")
+
+    async def test_bad_collection_key_ignored(self):
+        c = chat(9403)
+        before = len(c.log)
+        await c.press("c:nonsense")
+        self.assertEqual(len(c.log), before)
+
+    async def test_menu_has_collections_button(self):
+        c = chat(9404)
+        await c.say("/start")
+        self.assertIn("m:coll", [b.callback_data for b in c.buttons()])
+        await c.press("m:coll")
+        self.assertIn("📚", c.last()["text"])
+
+
 class Poll(unittest.IsolatedAsyncioTestCase):
     async def test_every_word_makes_a_valid_telegram_quiz_poll(self):
         import run

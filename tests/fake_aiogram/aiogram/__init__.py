@@ -118,6 +118,9 @@ class Bot:
     async def send_photo(self, chat_id, photo, **kw):
         await self._record("photo", chat_id, photo=photo, **kw)
 
+    async def send_document(self, chat_id, document, **kw):
+        await self._record("document", chat_id, document=document, **kw)
+
     async def set_my_commands(self, commands, language_code=None):
         self.profile = getattr(self, "profile", [])
         self.profile.append(("commands", language_code, commands))

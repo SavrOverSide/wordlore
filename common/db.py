@@ -69,6 +69,7 @@ class Store:
             CREATE TABLE IF NOT EXISTS week_snap (
                 user_id INTEGER PRIMARY KEY, correct INTEGER, answered INTEGER, rounds INTEGER
             );
+            CREATE TABLE IF NOT EXISTS vouchers (user_id INTEGER, kind TEXT, n INTEGER, PRIMARY KEY (user_id, kind));
             CREATE TABLE IF NOT EXISTS subs (
                 user_id INTEGER PRIMARY KEY,
                 at INTEGER
@@ -263,6 +264,20 @@ class Store:
         self.conn.execute("INSERT OR REPLACE INTO week_snap VALUES (?, ?, ?, ?)", (uid, now["correct"], now["answered"], now["rounds"]))
         self.conn.commit()
         return {k: now[k] - before[k] for k in now}
+
+    # ---- vouchers: things paid for but not delivered yet (a file that failed to build, say) ---------
+    def add_voucher(self, uid: int, kind: str, n: int = 1) -> None:
+        self.conn.execute("INSERT INTO vouchers VALUES (?, ?, ?) ON CONFLICT(user_id, kind) DO UPDATE SET n = n + ?", (uid, kind, n, n))
+        self.conn.commit()
+
+    def take_voucher(self, uid: int, kind: str) -> bool:
+        cur = self.conn.execute("UPDATE vouchers SET n = n - 1 WHERE user_id = ? AND kind = ? AND n > 0", (uid, kind))
+        self.conn.commit()
+        return cur.rowcount == 1
+
+    def vouchers(self, uid: int, kind: str) -> int:
+        row = self.conn.execute("SELECT n FROM vouchers WHERE user_id = ? AND kind = ?", (uid, kind)).fetchone()
+        return row[0] if row else 0
 
     # ---- duels -------------------------------------------------------------------------------
     def create_duel(self, creator: int, name: str, qs: list, score: int) -> str:

@@ -20,7 +20,7 @@ async def send_invoice(bot: Bot, chat_id: int, title: str, description: str, pay
     )
 
 
-def payments_router(store: Store, products: dict, on_paid: Callable[[int, str], str]) -> Router:
+def payments_router(store: Store, products: dict, on_paid: Callable[[int, str], str], after_paid=None) -> Router:
     """products: payload -> stars. on_paid(user_id, payload) grants the item and returns a reply."""
     router = Router()
 
@@ -34,6 +34,8 @@ def payments_router(store: Store, products: dict, on_paid: Callable[[int, str], 
         p = message.successful_payment
         if store.record_payment(p.telegram_payment_charge_id, message.from_user.id, p.total_amount, p.invoice_payload):
             await message.answer(on_paid(message.from_user.id, p.invoice_payload))
+            if after_paid:  # e.g. deliver a file that was just bought
+                await after_paid(message, p.invoice_payload)
 
     @router.message(Command("paysupport"))
     async def paysupport(message: Message):

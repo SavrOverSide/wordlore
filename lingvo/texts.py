@@ -4,7 +4,9 @@ FREE_ROUNDS = 1        # free quiz rounds per day (5 questions each)
 QUESTIONS = 5
 FREE_SAVED = 10        # saved words for free users
 INVITER_BONUS = 2      # extra rounds for whoever invites a friend
-INVITEE_BONUS = 1      # extra round for the friend
+INVITEE_BONUS = 1
+STREAK_REWARD_EVERY = 7   # every 7th streak day earns one bonus quiz round
+STREAK_REWARD = 1      # extra round for the friend
 PRODUCTS = {"premium_30": 99, "premium_365": 799}   # payload -> Stars
 PRODUCT_DAYS = {"premium_30": 30, "premium_365": 365}
 
@@ -74,6 +76,7 @@ T = {
         "btn_coll": "📚 Коллекции", "btn_coll_quiz": "🧠 Викторина по коллекции", "btn_more_coll": "🔁 Ещё из коллекции", "btn_all_coll": "📚 Все коллекции",
         "coll_title": "📚 <b>Коллекции слов</b>\n\nСлова по тому, откуда они пришли. Жми на коллекцию, и я покажу случайное слово из неё.\n🔒 открыто в премиуме, «{free}» доступна всем.",
         "coll_locked": "🔒 Эта коллекция открыта в премиуме. Бесплатно доступна «{free}», а премиум открывает все.",
+        "streak_reward": "🎁 Серия {n} дней! Держи бонус: +{b} раунд викторины.",
         "invite_welcome": "🎁 Ты пришёл по приглашению: +{c} бонусный раунд викторины.",
         "premium": ("⭐ <b>Wordlore Премиум</b>\n\n• Безлимитные раунды викторины\n• Весь архив: любое слово из {n} через /random\n"
                     "• Все коллекции слов по языкам-источникам\n• Сохранённые слова без лимита\n• Серия переживёт один пропущенный день\n\n{status}"),
@@ -134,6 +137,7 @@ T = {
         "btn_coll": "📚 Collections", "btn_coll_quiz": "🧠 Quiz on this collection", "btn_more_coll": "🔁 Another from this collection", "btn_all_coll": "📚 All collections",
         "coll_title": "📚 <b>Word collections</b>\n\nWords grouped by where they came from. Tap a collection and I'll show a random word from it.\n🔒 is for premium, “{free}” is open to everyone.",
         "coll_locked": "🔒 This collection is a premium feature. “{free}” is free, premium opens them all.",
+        "streak_reward": "🎁 {n}-day streak! Here is a bonus: +{b} quiz round.",
         "invite_welcome": "🎁 You joined by invitation: +{c} bonus quiz round.",
         "premium": ("⭐ <b>Wordlore Premium</b>\n\n• Unlimited quiz rounds\n• Full archive: any of {n} words via /random\n"
                     "• All word collections by source language\n• Unlimited saved words\n• Your streak survives one missed day\n\n{status}"),

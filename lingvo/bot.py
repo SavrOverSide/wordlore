@@ -21,7 +21,7 @@ from common.growth import parse_ref, ref_link, share_url, start_arg
 from common.stars import payments_router, send_invoice
 from .card import render, render_result
 from .collections import FREE_COLLECTION, all_keys, members, title as coll_title
-from .texts import (FREE_ROUNDS, FREE_SAVED, INVITEE_BONUS, INVITER_BONUS, PRODUCT_DAYS, PRODUCTS, QUESTIONS, T, rank_for)
+from .texts import (FREE_ROUNDS, FREE_SAVED, INVITEE_BONUS, INVITER_BONUS, STREAK_REWARD, STREAK_REWARD_EVERY, PRODUCT_DAYS, PRODUCTS, QUESTIONS, T, rank_for)
 
 WORDS = json.loads((Path(__file__).parent / "words.json").read_text(encoding="utf-8"))
 
@@ -393,7 +393,8 @@ async def finish_round(c: CallbackQuery, user, r: dict) -> None:
     lg, t = lang(user), T[lang(user)]
     del ROUNDS[user.id]
     store.finish_round(user.id)
-    streak, best, _ = store.streak_hit(user.id, grace=1 if store.is_premium(user.id) else 0)
+    streak, best, grew = store.streak_hit(user.id, grace=1 if store.is_premium(user.id) else 0)
+    reward = grew and streak % STREAK_REWARD_EVERY == 0
     correct = store.user_stats(user.id)["correct"]
     rank_ru, rank_en, progress, next_ru = rank_for(correct)
     rank = rank_ru if lg == "ru" else rank_en
@@ -409,6 +410,9 @@ async def finish_round(c: CallbackQuery, user, r: dict) -> None:
         rows.append([button(t["btn_premium"], "m:premium")])
     await c.message.answer_photo(BufferedInputFile(image, filename="result.jpg"), caption=caption, parse_mode="HTML",
                                  reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+    if reward:
+        store.add_credits(user.id, STREAK_REWARD)
+        await c.message.answer(t["streak_reward"].format(n=streak, b=STREAK_REWARD))
     if r.get("duel"):
         await settle_duel(c, user, r)
 

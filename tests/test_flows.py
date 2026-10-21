@@ -426,6 +426,31 @@ class Search(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(d.log), n)
 
 
+class StreakReward(unittest.IsolatedAsyncioTestCase):
+    async def test_seventh_day_gives_bonus_round_once(self):
+        from datetime import timedelta
+        from common.db import today
+        c = chat(9501)
+        # six earlier days in a row, last one yesterday
+        for back in range(6, 0, -1):
+            store.conn.execute("INSERT OR REPLACE INTO streaks VALUES (?, ?, ?, ?)",
+                               (9501, (today() - timedelta(days=back)).isoformat(), 7 - back, 7 - back))
+        store.conn.commit()
+        await c.say("/quiz")
+        await play_round(c, [1, 1, 1, 1, 1])
+        self.assertEqual(store.streak(9501)[0], 7)
+        self.assertTrue(any("🎁" in x.get("text", "") and "7" in x.get("text", "") for x in c.log))
+        self.assertEqual(store.credits(9501), 1)
+        await c.press("m:quiz")                                    # the bonus round is real and playable
+        self.assertIn("1/5", c.last()["text"])
+
+    async def test_no_bonus_on_ordinary_days(self):
+        c = chat(9502)
+        await c.say("/quiz")
+        await play_round(c, [1, 1, 1, 1, 1])
+        self.assertEqual(store.credits(9502), 0)
+
+
 class Collections(unittest.IsolatedAsyncioTestCase):
     async def test_every_word_is_in_exactly_one_collection(self):
         from lingvo.bot import WORDS

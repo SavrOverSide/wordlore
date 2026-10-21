@@ -232,7 +232,90 @@ class WordloreFlows(unittest.IsolatedAsyncioTestCase):
                 for field in re.findall(r"\{(\w+)\}", val):
                     self.assertIn(field, {"n", "total", "a", "free", "price", "score", "rank", "streak", "correct", "best", "answered",
                                           "rounds", "saved", "refs", "prem", "date", "limit", "b", "c", "link", "p", "off", "word",
-                                          "status", "promo"}, (lg, key, field))
+                                          "status", "promo", "name", "mine", "theirs", "verdict"}, (lg, key, field))
+
+
+async def play_round(c, answers):
+    """Plays a whole round, answering right/wrong as listed. Returns the questions asked."""
+    msg = harness.Message(c.user, "", BOT)
+    asked = []
+    for n, ok in enumerate(answers):
+        text = c.last()["text"]
+        asked.append(text.split("\n")[2] if "\n" in text else text)
+        data = correct_option(c) if ok else wrong_option(c)
+        await c.press(data, on=msg)
+        await c.press(f"n:{n + 1}" if n < len(answers) - 1 else "n:end", on=msg)
+
+
+class Duels(unittest.IsolatedAsyncioTestCase):
+    async def test_duel_full_cycle(self):
+        a = chat(7001)
+        a.user.first_name = "Аня"
+        await a.say("/quiz")
+        await play_round(a, [1, 1, 1, 0, 0])             # Anya scores 3
+        BOT.sent.clear()
+        await a.press("m:duel")
+        link = next(x for x in a.last()["text"].split() if "start=duel_" in x)
+        code = link.split("duel_")[1]
+        self.assertEqual(store.get_duel(code)["score"], 3)
+        await a.press("m:duel")                           # pressing again reuses the same challenge
+        self.assertIn(code, a.last()["text"])
+        assert_buttons_routable(self, a)
+        # a friend opens the link: free round with the same questions, referral bonus goes to Anya
+        b = chat(7002)
+        b.user.first_name = "Боря"
+        await b.say(f"/start duel_{code}")
+        self.assertIn("Аня", b.log[-2]["text"] if len(b.log) > 1 else "")
+        first_q = b.last()["text"]
+        self.assertIn("1/5", first_q)
+        self.assertEqual(store.credits(7001), INVITER_BONUS)
+        self.assertEqual(store.free_left(7002, 1), 1)      # the duel did not spend his daily round
+        qs_a = store.get_duel(code)["qs"]
+        from lingvo.bot import ROUNDS
+        self.assertEqual(ROUNDS[7002]["qs"], qs_a)
+        BOT.sent.clear()
+        await play_round(b, [1, 1, 1, 1, 0])               # Borya scores 4 and wins
+        texts = " ".join(x.get("text", "") for x in b.log)
+        self.assertIn("🏆", texts)
+        self.assertEqual(store.free_left(7002, 1), 1)
+        notice = [s for s in BOT.sent if s["chat_id"] == 7001]
+        self.assertEqual(len(notice), 1)
+        self.assertIn("Боря", notice[0]["text"])
+        self.assertIn("4/5", notice[0]["text"])
+        self.assertEqual(store.duel_plays(code), [("Боря", 4)])
+        # he cannot replay the same duel, and Anya opening her own link just gets it back
+        await b.say(f"/start duel_{code}")
+        self.assertIn("уже играл", b.last()["text"])
+        await a.say(f"/start duel_{code}")
+        self.assertIn(code, a.last()["text"])
+
+    async def test_duel_loss_and_draw_wording(self):
+        a = chat(7010)
+        await a.say("/quiz")
+        await play_round(a, [1, 1, 1, 1, 1])
+        await a.press("m:duel")
+        code = next(x for x in a.last()["text"].split() if "start=duel_" in x).split("duel_")[1]
+        b = chat(7011)
+        await b.say(f"/start duel_{code}")
+        await play_round(b, [0, 0, 0, 0, 0])
+        self.assertTrue(any("😅" in x.get("text", "") for x in b.log))
+        c2 = chat(7012)
+        await c2.say(f"/start duel_{code}")
+        await play_round(c2, [1, 1, 1, 1, 1])
+        self.assertTrue(any("🤝" in x.get("text", "") for x in c2.log))
+
+    async def test_unknown_duel_code(self):
+        c = chat(7020)
+        await c.say("/start duel_deadbeef")
+        self.assertIn("не найден", c.last()["text"])
+        await c.say("/start duel_x'; drop table users;--")
+        self.assertIn("не найден", c.last()["text"])
+        self.assertEqual(store.credits(7020), 0)
+
+    async def test_duel_button_without_finished_round(self):
+        c = chat(7030)
+        await c.press("m:duel")
+        self.assertIn("/quiz", c.last()["text"])
 
 
 class DailyPost(unittest.IsolatedAsyncioTestCase):

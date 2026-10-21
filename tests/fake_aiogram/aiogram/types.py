@@ -28,8 +28,8 @@ class LinkPreviewOptions(_Obj):
 
 
 class User(_Obj):
-    def __init__(self, id, language_code="ru"):
-        self.id, self.language_code = id, language_code
+    def __init__(self, id, language_code="ru", first_name=None):
+        self.id, self.language_code, self.first_name = id, language_code, first_name
 
 
 class Message(_Obj):

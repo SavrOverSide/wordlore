@@ -25,6 +25,7 @@ WORDS = json.loads((Path(__file__).parent / "words.json").read_text(encoding="ut
 
 store = Store("lingvo")
 router = Router()
+LAST: dict = {}     # user id -> their last finished round (to turn it into a challenge)
 ROUNDS: dict = {}   # user id -> running quiz round (in memory: a restart just ends open rounds)
 
 
@@ -122,7 +123,10 @@ async def start(m: Message):
     if not store.get_lang(user.id):
         store.set_lang(user.id, lang_of(user))  # remember it, so notifications can be localized later
     arg = start_arg(m.text)
+    duel_code = arg[5:] if arg.startswith("duel_") else None
     inviter = parse_ref(arg)
+    if duel_code and store.get_duel(duel_code):
+        inviter = store.get_duel(duel_code)["creator"]  # whoever sent the challenge also gets the invite bonus
     if created and inviter and store.add_referral(user.id, inviter):
         store.add_credits(inviter, INVITER_BONUS)
         store.add_credits(user.id, INVITEE_BONUS)
@@ -131,6 +135,8 @@ async def start(m: Message):
             await m.bot.send_message(inviter, T[store.get_lang(inviter) or "ru"]["invite_notice"].format(b=INVITER_BONUS))
         except Exception:
             pass  # the inviter may have blocked the bot
+    if duel_code is not None:
+        return await start_duel(m, user, duel_code)
     if arg == "quiz":
         return await start_round(m, user)
     if arg == "sub":
@@ -242,6 +248,26 @@ async def start_round(m: Message, user) -> None:
     await m.answer(text, parse_mode="HTML", reply_markup=markup)
 
 
+def display_name(user, lg: str) -> str:
+    return esc(getattr(user, "first_name", None) or T[lg]["friend"])
+
+
+async def start_duel(m: Message, user, code: str) -> None:
+    d = store.get_duel(code)
+    if d is None:
+        return await m.answer(tr(user, "duel_gone"), reply_markup=menu(user))
+    if d["creator"] == user.id:
+        link = f"https://t.me/{await bot_username(m.bot)}?start=duel_{code}"
+        return await m.answer(tr(user, "duel_own", link=link), disable_web_page_preview=True)
+    if store.duel_played(code, user.id):
+        return await m.answer(tr(user, "duel_done"), reply_markup=menu(user))
+    lg = lang(user)
+    await m.answer(tr(user, "duel_intro", name=esc(d["name"]), total=QUESTIONS), parse_mode="HTML")
+    ROUNDS[user.id] = {"qs": d["qs"], "i": 0, "score": 0, "answered": False, "t": time.time(), "duel": code}
+    text, markup = question(user)
+    await m.answer(text, parse_mode="HTML", reply_markup=markup)
+
+
 def question(user):
     r, lg = ROUNDS[user.id], lang(user)
     w = WORDS[r["qs"][r["i"]]]
@@ -313,11 +339,46 @@ async def finish_round(c: CallbackQuery, user, r: dict) -> None:
                                          streak=t["streak_line"].format(n=streak, best=best) if streak > 1 else t["streak_none"])
     link = ref_link(await bot_username(c.bot), user.id)
     share_text = t["share_result"].format(score=r["score"], total=QUESTIONS, rank=rank)
-    rows = [[button(t["btn_again"], "m:quiz"), button(t["btn_share"], url=share_url(link, share_text))]]
+    rows = [[button(t["btn_again"], "m:quiz"), button(t["btn_share"], url=share_url(link, share_text))],
+            [button(t["btn_duel"], "m:duel")]]
+    LAST[user.id] = {"qs": r["qs"], "score": r["score"], "code": r.get("duel")}
     if not store.is_premium(user.id):
         rows.append([button(t["btn_premium"], "m:premium")])
     await c.message.answer_photo(BufferedInputFile(image, filename="result.jpg"), caption=caption, parse_mode="HTML",
                                  reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+    if r.get("duel"):
+        await settle_duel(c, user, r)
+
+
+async def settle_duel(c: CallbackQuery, user, r: dict) -> None:
+    """Compares a challenged player with the challenger and tells both."""
+    d = store.get_duel(r["duel"])
+    if d is None or not store.duel_play(r["duel"], user.id, getattr(user, "first_name", None) or "", r["score"]):
+        return
+    mine, theirs, lg = r["score"], d["score"], lang(user)
+    key = "duel_win" if mine > theirs else "duel_draw" if mine == theirs else "duel_lose"
+    await c.message.answer(tr(user, key, mine=mine, theirs=theirs, total=QUESTIONS, name=esc(d["name"])), parse_mode="HTML")
+    clg = store.get_lang(d["creator"]) or "ru"
+    verdict = T[clg]["verdict_win" if theirs > mine else "verdict_draw" if mine == theirs else "verdict_lose"]
+    try:
+        await c.bot.send_message(d["creator"], T[clg]["duel_notice"].format(
+            name=display_name(user, clg), mine=theirs, theirs=mine, total=QUESTIONS, verdict=verdict), parse_mode="HTML")
+    except Exception:
+        pass  # the challenger may have blocked the bot
+
+
+async def make_duel(c: CallbackQuery, user) -> None:
+    last = LAST.get(user.id)
+    if not last:
+        return await c.message.answer(tr(user, "round_gone"))
+    if last.get("made") is None:
+        name = getattr(user, "first_name", None) or ""
+        last["made"] = store.create_duel(user.id, name or T[lang(user)]["friend"], last["qs"], last["score"])
+    t = T[lang(user)]
+    link = f"https://t.me/{await bot_username(c.bot)}?start=duel_{last['made']}"
+    await c.message.answer(tr(user, "duel_made", score=last["score"], total=QUESTIONS, link=link), parse_mode="HTML",
+                           disable_web_page_preview=True,
+                           reply_markup=keyboard([button(t["btn_share"], url=share_url(link, t["duel_share"].format(score=last["score"], total=QUESTIONS)))]))
 
 
 # ---------------------------------------------------------------------------------------------
@@ -399,6 +460,8 @@ async def menu_button(c: CallbackQuery):
         await show_invite(m, user)
     elif action == "premium":
         await show_premium(m, user)
+    elif action == "duel":
+        await make_duel(c, user)
     elif action == "sub":
         await toggle_sub(m, user)
     elif action == "lang":

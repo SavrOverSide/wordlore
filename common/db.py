@@ -1,3 +1,5 @@
+import json
+import secrets
 import sqlite3
 import time
 from datetime import date, datetime, timedelta
@@ -57,6 +59,12 @@ class Store:
                 payload TEXT,
                 at INTEGER,
                 PRIMARY KEY (user_id, key)
+            );
+            CREATE TABLE IF NOT EXISTS duels (
+                code TEXT PRIMARY KEY, creator INTEGER, name TEXT, qs TEXT, score INTEGER, at INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS duel_plays (
+                code TEXT, user_id INTEGER, name TEXT, score INTEGER, at INTEGER, PRIMARY KEY (code, user_id)
             );
             CREATE TABLE IF NOT EXISTS subs (
                 user_id INTEGER PRIMARY KEY,
@@ -226,6 +234,28 @@ class Store:
     def delete_saved(self, uid: int, key: str) -> None:
         self.conn.execute("DELETE FROM saved WHERE user_id = ? AND key = ?", (uid, key))
         self.conn.commit()
+
+    # ---- duels -------------------------------------------------------------------------------
+    def create_duel(self, creator: int, name: str, qs: list, score: int) -> str:
+        code = secrets.token_hex(4)
+        self.conn.execute("INSERT INTO duels VALUES (?, ?, ?, ?, ?, ?)", (code, creator, name, json.dumps(qs), score, int(time.time())))
+        self.conn.commit()
+        return code
+
+    def get_duel(self, code: str):
+        row = self.conn.execute("SELECT creator, name, qs, score FROM duels WHERE code = ?", (code,)).fetchone()
+        return None if row is None else {"creator": row[0], "name": row[1], "qs": json.loads(row[2]), "score": row[3]}
+
+    def duel_played(self, code: str, uid: int) -> bool:
+        return self.conn.execute("SELECT 1 FROM duel_plays WHERE code = ? AND user_id = ?", (code, uid)).fetchone() is not None
+
+    def duel_play(self, code: str, uid: int, name: str, score: int) -> bool:
+        cur = self.conn.execute("INSERT OR IGNORE INTO duel_plays VALUES (?, ?, ?, ?, ?)", (code, uid, name, score, int(time.time())))
+        self.conn.commit()
+        return cur.rowcount == 1
+
+    def duel_plays(self, code: str) -> list:
+        return self.conn.execute("SELECT name, score FROM duel_plays WHERE code = ? ORDER BY score DESC, at", (code,)).fetchall()
 
     # ---- daily-message subscriptions -----------------------------------------------------------
     def set_sub(self, uid: int, on: bool) -> None:

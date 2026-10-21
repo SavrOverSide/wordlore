@@ -32,7 +32,7 @@ T = {
     "ru": {
         "welcome": ("<b>Wordlore</b> — истории слов.\n\nОткуда взялись «шахматы», что общего у «спасибо» с Богом и почему "
                     "robot — это «подневольный труд»? Каждый день новое слово с цепочкой происхождения, "
-                    "а ещё викторины, серии и ранги.\n\n🧠 Раунд из 5 вопросов бесплатно каждый день."),
+                    "а ещё викторины, серии и ранги.\n\n🧠 Раунд из 5 вопросов бесплатно каждый день.\n🔎 Любое слово можно найти: просто напиши его мне."),
         "btn_quiz": "🧠 Викторина", "btn_word": "📖 Слово дня", "btn_me": "🔥 Моя серия", "btn_saved": "💾 Мои слова",
         "btn_invite": "👥 Пригласить", "btn_premium": "⭐ Премиум", "btn_sub_on": "🔔 Слово дня в личку",
         "btn_sub_off": "🔕 Отключить рассылку", "btn_next": "➡️ Дальше ({n}/{total})", "btn_finish": "🏁 Итог",
@@ -68,6 +68,9 @@ T = {
         "friend": "друг",
         "week_active": "📊 <b>Твоя неделя в Wordlore</b>\n\nОтветов: {answered}, из них верных: {correct}\nРаундов: {rounds}\n🔥 Серия: {streak} дн.\n\nНовая неделя, новые слова. Сыграем?",
         "week_idle": "👋 На этой неделе викторина ждала, а ты не заходил. Один раунд занимает минуту, а слово дня ты всё равно получаешь каждое утро.",
+        "search_hint": "Напиши слово (например «шахматы»), и я найду его историю.",
+        "search_pick": "Нашлось несколько слов. Какое открыть?",
+        "search_none": "Слова «{q}» в моей коллекции пока нет. Я записал его в список пожеланий: самые частые разберу в первую очередь.\n\nА пока загляни в слово дня: /word",
         "invite_welcome": "🎁 Ты пришёл по приглашению: +{c} бонусный раунд викторины.",
         "premium": ("⭐ <b>Wordlore Премиум</b>\n\n• Безлимитные раунды викторины\n• Весь архив: любое слово из {n} через /random\n"
                     "• Сохранённые слова без лимита\n• Серия переживёт один пропущенный день\n\n{status}"),
@@ -86,7 +89,7 @@ T = {
     "en": {
         "welcome": ("<b>Wordlore</b> — the stories behind words.\n\nWhy is a robot 'forced labour'? What do 'salary' and salt "
                     "have in common? Every day a new word with its family tree, plus quizzes, streaks and ranks.\n\n"
-                    "🧠 One 5-question round is free every day."),
+                    "🧠 One 5-question round is free every day.\n🔎 Look up any word: just type it to me."),
         "btn_quiz": "🧠 Quiz", "btn_word": "📖 Word of the day", "btn_me": "🔥 My streak", "btn_saved": "💾 My words",
         "btn_invite": "👥 Invite", "btn_premium": "⭐ Premium", "btn_sub_on": "🔔 Daily word in DM",
         "btn_sub_off": "🔕 Turn off daily DM", "btn_next": "➡️ Next ({n}/{total})", "btn_finish": "🏁 Result",
@@ -122,6 +125,9 @@ T = {
         "friend": "a friend",
         "week_active": "📊 <b>Your week in Wordlore</b>\n\nAnswers: {answered}, correct: {correct}\nRounds: {rounds}\n🔥 Streak: {streak} days\n\nNew week, new words. Shall we play?",
         "week_idle": "👋 The quiz waited all week and you didn't drop by. A round takes a minute, and you still get a word every morning.",
+        "search_hint": "Type a word (for example “robot”) and I'll look up its story.",
+        "search_pick": "Found several words. Which one?",
+        "search_none": "I don't have “{q}” in my collection yet. I've added it to the wish list: the most requested ones come first.\n\nMeanwhile, see today's word: /word",
         "invite_welcome": "🎁 You joined by invitation: +{c} bonus quiz round.",
         "premium": ("⭐ <b>Wordlore Premium</b>\n\n• Unlimited quiz rounds\n• Full archive: any of {n} words via /random\n"
                     "• Unlimited saved words\n• Your streak survives one missed day\n\n{status}"),

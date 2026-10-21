@@ -3,6 +3,7 @@ Premium (unlimited rounds, archive, unlimited saved words) is paid in Telegram S
 import asyncio
 import functools
 import html
+import re
 import json
 import random
 import time
@@ -13,7 +14,7 @@ from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.types import BufferedInputFile, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from common.config import lang_of
+from common.config import env, lang_of
 from common.db import Store, today
 from common.daily import TZ
 from common.growth import parse_ref, ref_link, share_url, start_arg
@@ -471,8 +472,66 @@ async def menu_button(c: CallbackQuery):
 
 router.include_router(payments_router(store, PRODUCTS, on_paid))
 
+# Free-text search lives in its own router that is included AFTER the payments router, so commands
+# like /paysupport and /stats (which are handled there) are never swallowed by a catch-all text handler.
+search = Router()
 
-@router.callback_query()
+
+def norm(s: str) -> str:
+    return re.sub(r"[^\w]+", " ", s.lower().replace("ё", "е")).strip()
+
+
+def find_words(query: str, limit: int = 6) -> list:
+    q = norm(query)
+    if len(q) < 2:
+        return []
+    keyed = [(i, norm(w["word"])) for i, w in enumerate(WORDS)]
+    for hit in (lambda k: k == q, lambda k: k.startswith(q), lambda k: q in k):
+        found = [i for i, k in keyed if hit(k)]
+        if found:
+            return found[:limit]
+    return []
+
+
+@search.message(F.text)
+async def search_word(m: Message):
+    user, text = m.from_user, (m.text or "").strip()
+    if text.startswith("/"):
+        return  # an unknown command: stay quiet
+    store.ensure_user(user.id)
+    if not 2 <= len(text) <= 40:
+        return await m.answer(tr(user, "search_hint"))
+    found = find_words(text)
+    if not found:
+        store.add_wish(user.id, norm(text))
+        return await m.answer(tr(user, "search_none", q=esc(text[:40])), parse_mode="HTML", reply_markup=menu(user))
+    if len(found) == 1:
+        return await send_word(m, user, WORDS[found[0]])
+    await m.answer(tr(user, "search_pick"), reply_markup=keyboard(*[[button(WORDS[i]["word"], f"w:{i}")] for i in found]))
+
+
+@search.callback_query(F.data.startswith("w:"))
+async def open_word(c: CallbackQuery):
+    try:
+        w = WORDS[int(c.data[2:])]
+    except (ValueError, IndexError):
+        return await c.answer()
+    await send_word(c.message, c.from_user, w)
+    await c.answer()
+
+
+@router.message(Command("wishes"))
+async def wishes_cmd(m: Message):
+    if str(m.from_user.id) != env("OWNER_ID"):
+        return
+    rows = store.top_wishes()
+    await m.answer("\n".join(f"{n}× {w}" for w, n in rows) or "—")
+
+
+@search.callback_query()
 async def stale_button(c: CallbackQuery):
     """Buttons from older versions of the bot (or expired rounds)."""
     await c.answer(tr(c.from_user, "stale"), show_alert=True)
+
+
+router.include_router(search)

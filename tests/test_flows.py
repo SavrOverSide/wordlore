@@ -232,7 +232,7 @@ class WordloreFlows(unittest.IsolatedAsyncioTestCase):
                 for field in re.findall(r"\{(\w+)\}", val):
                     self.assertIn(field, {"n", "total", "a", "free", "price", "score", "rank", "streak", "correct", "best", "answered",
                                           "rounds", "saved", "refs", "prem", "date", "limit", "b", "c", "link", "p", "off", "word",
-                                          "status", "promo", "name", "mine", "theirs", "verdict"}, (lg, key, field))
+                                          "status", "promo", "name", "mine", "theirs", "verdict", "q"}, (lg, key, field))
 
 
 async def play_round(c, answers):
@@ -359,6 +359,71 @@ class Weekly(unittest.IsolatedAsyncioTestCase):
         await run.weekly_summary(bot3) if real.now(run.TZ).weekday() != 6 else None
         if real.now(run.TZ).weekday() != 6:
             self.assertEqual(bot3.sent, [])
+
+
+class Search(unittest.IsolatedAsyncioTestCase):
+    async def test_exact_word_returns_its_card(self):
+        c = chat(9301)
+        await c.say("Шахматы")
+        self.assertEqual(c.last()["kind"], "photo")
+        self.assertIn("шахматы", c.last()["caption"].lower())
+        assert_buttons_routable(self, c)
+
+    async def test_yo_and_case_and_punctuation_insensitive(self):
+        from lingvo.bot import find_words, WORDS
+        for i in (0, 5, 40):
+            w = WORDS[i]["word"]
+            self.assertIn(i, find_words(f"  {w.upper()}!! "))
+
+    async def test_prefix_lists_choices_and_choice_opens_word(self):
+        from lingvo.bot import WORDS, norm
+        # find a 2-letter prefix shared by several words
+        by = {}
+        for i, w in enumerate(WORDS):
+            by.setdefault(norm(w["word"])[:3], []).append(i)
+        prefix = next(k for k, v in by.items() if len(v) >= 2 and len(k) == 3 and not any(norm(WORDS[j]["word"]) == k for j in v))
+        c = chat(9302)
+        await c.say(prefix)
+        self.assertEqual(c.last()["kind"], "text")
+        choices = [b for b in c.buttons() if b.callback_data.startswith("w:")]
+        self.assertGreaterEqual(len(choices), 2)
+        assert_buttons_routable(self, c)
+        await c.press(choices[0].callback_data)
+        self.assertEqual(c.last()["kind"], "photo")
+
+    async def test_unknown_word_goes_to_wishes(self):
+        c = chat(9303)
+        await c.say("абракадабра")
+        self.assertIn("пожеланий", c.last()["text"])
+        d = chat(9304)
+        await d.say("Абракадабра")
+        self.assertEqual(store.top_wishes(1)[0], ("абракадабра", 2))
+
+    async def test_commands_not_swallowed_by_search(self):
+        c = chat(9305)
+        await c.say("/paysupport help me")           # handled by the payments router
+        self.assertIn("Проблема с оплатой", c.last()["text"])
+        before = len(c.log)
+        await c.say("/nosuchcommand")
+        self.assertEqual(len(c.log), before)          # unknown commands: silence
+
+    async def test_too_short_or_long_text_gets_hint(self):
+        c = chat(9306)
+        await c.say("a")
+        self.assertIn("Напиши слово", c.last()["text"])
+        await c.say("x" * 50)
+        self.assertIn("Напиши слово", c.last()["text"])
+
+    async def test_wishes_command_owner_only(self):
+        import lingvo.bot as mod
+        c = chat(9307)
+        mod.env = lambda name, default="": {"OWNER_ID": "9307"}.get(name, default)
+        await c.say("/wishes")
+        self.assertIn("×", c.last()["text"])
+        d = chat(9308)
+        n = len(d.log)
+        await d.say("/wishes")
+        self.assertEqual(len(d.log), n)
 
 
 class Poll(unittest.IsolatedAsyncioTestCase):

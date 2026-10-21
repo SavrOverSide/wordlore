@@ -144,6 +144,22 @@ class Store:
         self.conn.commit()
         return True
 
+    def take_n(self, uid: int, free_per_day: int, n: int) -> bool:
+        """Spend `n` uses at once, or none at all if there are not enough (premium is unlimited)."""
+        premium_until, credits, used_day, used = self._user(uid)
+        if premium_until > time.time():
+            return True
+        day = today().isoformat()
+        used = used if used_day == day else 0
+        free = max(0, free_per_day - used)
+        if free + credits < n:
+            return False
+        from_free = min(free, n)
+        self.conn.execute("UPDATE users SET used_day = ?, used = ?, credits = credits - ? WHERE id = ?",
+                          (day, used + from_free, n - from_free, uid))
+        self.conn.commit()
+        return True
+
     # ---- payments ----------------------------------------------------------------------------
     def record_payment(self, charge_id: str, uid: int, stars: int, payload: str) -> bool:
         cur = self.conn.execute(

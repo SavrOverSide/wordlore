@@ -361,6 +361,41 @@ class Weekly(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(bot3.sent, [])
 
 
+class Poll(unittest.IsolatedAsyncioTestCase):
+    async def test_every_word_makes_a_valid_telegram_quiz_poll(self):
+        import run
+        from lingvo.bot import WORDS
+        from lingvo.bot import pick
+        for w in WORDS:                       # Telegram limits: question 300, option 100, explanation 200, 2-10 options
+            self.assertLessEqual(len(w["q"]["ru"]), 300)
+            opts = [pick(w["a"], "ru")] + [pick(o, "ru") for o in w["w"]]
+            self.assertTrue(2 <= len(opts) <= 10 and all(1 <= len(o) <= 100 for o in opts), w["word"])
+            self.assertEqual(len(set(opts)), len(opts), w["word"])
+            self.assertLessEqual(len(((w.get("fact") or {}).get("ru") or opts[0])[:200]), 200)
+
+    async def test_poll_posted_with_right_answer_marked(self):
+        import run
+        run.env = lambda name, default="": {"CHANNEL": "@c"}.get(name, default)
+        bot = Bot("x")
+        await run.post_poll(bot)
+        poll = next(s for s in bot.sent if s["kind"] == "poll")
+        self.assertEqual(poll["chat_id"], "@c")
+        w = run.poll_word()
+        self.assertNotEqual(w, run.word_of_day())
+        right = run.pick(w["a"], "ru")
+        self.assertEqual(poll["options"][poll["correct_option_id"]], right)
+        self.assertEqual(poll["type"], "quiz")
+        self.assertTrue(poll["is_anonymous"])         # channels only allow anonymous polls
+        self.assertIn("start=quiz", poll["reply_markup"].inline_keyboard[0][0].url)
+
+    async def test_no_channel_no_poll(self):
+        import run
+        run.env = lambda name, default="": ""
+        bot = Bot("x")
+        await run.post_poll(bot)
+        self.assertEqual(bot.sent, [])
+
+
 class DailyPost(unittest.IsolatedAsyncioTestCase):
     async def test_post_word_to_channel_and_subscribers(self):
         import run

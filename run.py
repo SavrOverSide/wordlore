@@ -1,6 +1,7 @@
 """Runs the Wordlore bot; every morning posts the word of the day to CHANNEL and to DM subscribers."""
 import asyncio
 import logging
+import random
 
 from aiogram import Bot, Dispatcher
 from aiogram.types import BufferedInputFile, InlineKeyboardButton, InlineKeyboardMarkup
@@ -11,7 +12,8 @@ from datetime import datetime
 from common.daily import TZ, every_day
 from common.profile import setup_profile
 from common.growth import broadcast, promo, ref_link, share_url
-from lingvo.bot import WORDS, esc, router, store, word_index, word_of_day, word_photo
+from lingvo.bot import WORDS, esc, pick, router, store, word_index, word_of_day, word_photo
+from common.db import today
 from lingvo.profile import COMMANDS, DESCRIPTION, SHORT
 from lingvo.texts import T
 
@@ -50,6 +52,30 @@ async def post_word(bot: Bot) -> None:
     logging.info("daily DM: %s subscribers, %s dropped", len(store.subs()) + len(dead), len(dead))
 
 
+def poll_word() -> dict:
+    """A different word from the word of the day, stable for the whole day."""
+    idx = (today().toordinal() * 7 + 3) % len(WORDS)
+    if WORDS[idx] is word_of_day():
+        idx = (idx + 1) % len(WORDS)
+    return WORDS[idx]
+
+
+async def post_poll(bot: Bot) -> None:
+    """Evening quiz poll in the channel: people answer with one tap, see the explanation and stay."""
+    channel = env("CHANNEL")
+    if not channel:
+        return
+    w = poll_word()
+    me = await bot.get_me()
+    options = [(pick(w["a"], "ru"), True)] + [(pick(o, "ru"), False) for o in w["w"]]
+    random.shuffle(options)
+    explanation = ((w.get("fact") or {}).get("ru") or pick(w["a"], "ru"))[:200]
+    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🧠 Ещё вопросы в боте", url=f"https://t.me/{me.username}?start=quiz")]])
+    await bot.send_poll(channel, question=w["q"]["ru"][:300], options=[o for o, _ in options], type="quiz",
+                        correct_option_id=[ok for _, ok in options].index(True), explanation=explanation,
+                        is_anonymous=True, reply_markup=kb)
+
+
 async def weekly_summary(bot: Bot) -> None:
     """Sundays: each daily-DM subscriber gets their week in numbers (or a gentle nudge if they were away)."""
     if datetime.now(TZ).weekday() != 6:
@@ -80,6 +106,7 @@ async def main() -> None:
         dp.start_polling(bot),
         every_day(env("POST_TIME", "10:00"), lambda: post_word(bot)),
         every_day("18:00", lambda: weekly_summary(bot)),
+        every_day(env("POLL_TIME", "18:30"), lambda: post_poll(bot)),
     )
 
 

@@ -123,6 +123,9 @@ class Bot:
     async def send_photo(self, chat_id, photo, **kw):
         await self._record("photo", chat_id, photo=photo, **kw)
 
+    async def send_poll(self, chat_id, **kw):
+        await self._record("poll", chat_id, **kw)
+
     async def send_document(self, chat_id, document, **kw):
         await self._record("document", chat_id, document=document, **kw)
 

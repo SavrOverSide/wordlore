@@ -38,8 +38,10 @@ async def main():
     h.expect(any(getattr(c, "chat_id", None) == 11 for c in calls), "challenger gets the duel result")
 
     # paywall after the free round, then premium purchase
-    calls = await h.press(11, "m:quiz")
-    h.expect("m:premium" in h.buttons(calls), "paywall offers premium")
+    wl.store.ensure_user(16)
+    wl.store.take(16, 1)                       # today's free round is already used
+    calls = await h.press(16, "m:quiz")
+    h.expect("m:premium" in h.buttons(calls) and "m:invite" in h.buttons(calls), "paywall offers premium and invites")
     calls = await h.press(11, "buy:premium_30")
     h.expect(any(type(c).__name__ == "SendInvoice" for c in calls), "invoice sent")
     calls = await h.pre_checkout(11, "premium_30", 99)
@@ -64,8 +66,8 @@ async def main():
         h.expect(bool(calls), f"{cmd} replies")
     calls = await h.press(14, "old:button")
     h.expect(any(type(c).__name__ == "AnswerCallbackQuery" and c.show_alert for c in calls), "stale button explained")
-    before = len(h.session.calls)
-    await h.say(14, "/nosuchcommand")
+    calls = await h.say(14, "/nosuchcommand")
+    h.expect(not calls, "unknown command stays silent")
     h.report()
 
 

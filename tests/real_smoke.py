@@ -53,6 +53,18 @@ async def main():
     calls = await h.say(11, "/random")
     h.expect(any(type(c).__name__ == "SendPhoto" for c in calls), "/random works for premium")
 
+    # gift: buy for a friend, the link arrives, the friend redeems it
+    calls = await h.press(30, "buy:gift_30")
+    h.expect("SendInvoice" in [type(c).__name__ for c in calls], "gift invoice")
+    await h.pre_checkout(30, "gift_30", 99)
+    calls = await h.paid(30, "gift_30", 99)
+    link = next((c.text for c in calls if getattr(c, "text", None) and "gift_" in c.text), "")
+    code = link.split("start=gift_")[1].split()[0] if "start=gift_" in link else ""
+    h.expect(bool(code), "gift link sent after payment")
+    calls = await h.say(31, f"/start gift_{code}")
+    h.expect(wl.store.is_premium(31) and any(getattr(c, "chat_id", None) == 30 for c in calls), "gift redeemed, giver thanked")
+    await h.say(30, "/gifts")
+
     # search, collections, other commands, support, stale buttons
     calls = await h.say(13, "шахматы")
     h.expect(any(type(c).__name__ == "SendPhoto" for c in calls), "search finds a word")

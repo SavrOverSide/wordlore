@@ -2,10 +2,10 @@
 COMMANDS = {
     "ru": [("start", "Начать"), ("word", "Слово дня"), ("quiz", "Викторина на 5 вопросов"), ("me", "Мой ранг и серия"),
            ("collections", "Коллекции слов"), ("saved", "Мои слова"), ("random", "Случайное слово (премиум)"), ("invite", "Позвать друга, получить раунды"),
-           ("sub", "Слово дня в личку: вкл/выкл"), ("premium", "Премиум"), ("lang", "English / Русский")],
+           ("sub", "Слово дня в личку: вкл/выкл"), ("premium", "Премиум"), ("gifts", "Мои подарочные ссылки"), ("lang", "English / Русский")],
     "en": [("start", "Start"), ("word", "Word of the day"), ("quiz", "5-question quiz"), ("me", "My rank and streak"),
            ("collections", "Word collections"), ("saved", "My saved words"), ("random", "Random word (premium)"), ("invite", "Invite a friend, get rounds"),
-           ("sub", "Daily word in DM: on/off"), ("premium", "Premium"), ("lang", "English / Русский")],
+           ("sub", "Daily word in DM: on/off"), ("premium", "Premium"), ("gifts", "My gift links"), ("lang", "English / Русский")],
 }
 DESCRIPTION = {
     "ru": ("Каждый день одно слово и его настоящая история: откуда пришло, через какие языки дошло, что значило раньше.\n\n"

@@ -7,8 +7,8 @@ INVITER_BONUS = 2      # extra rounds for whoever invites a friend
 INVITEE_BONUS = 1
 STREAK_REWARD_EVERY = 7   # every 7th streak day earns one bonus quiz round
 STREAK_REWARD = 1      # extra round for the friend
-PRODUCTS = {"premium_30": 99, "premium_365": 799}   # payload -> Stars
-PRODUCT_DAYS = {"premium_30": 30, "premium_365": 365}
+PRODUCTS = {"premium_30": 99, "premium_365": 799, "gift_30": 99}   # payload -> Stars
+PRODUCT_DAYS = {"premium_30": 30, "premium_365": 365, "gift_30": 30}
 
 # (minimum correct answers, ru title, en title)
 RANKS = [
@@ -77,6 +77,15 @@ T = {
         "coll_title": "📚 <b>Коллекции слов</b>\n\nСлова по тому, откуда они пришли. Жми на коллекцию, и я покажу случайное слово из неё.\n🔒 открыто в премиуме, «{free}» доступна всем.",
         "coll_locked": "🔒 Эта коллекция открыта в премиуме. Бесплатно доступна «{free}», а премиум открывает все.",
         "streak_reward": "🎁 Серия {n} дней! Держи бонус: +{b} раунд викторины.",
+        "buy_gift": "🎁 Подарить другу 30 дней · {p} ⭐", "inv_title_gift": "Премиум в подарок, 30 дней",
+        "inv_desc_gift": "Ссылка-подарок: друг откроет её и получит премиум на 30 дней",
+        "gift_paid": "Спасибо! 🎁 Подарок оплачен, ссылка придёт следующим сообщением.",
+        "gift_ready": "🎁 <b>Подарок готов</b>\n\nОтправь другу эту ссылку. Он откроет её и получит премиум Wordlore на {days} дней:\n{link}\n\nНеиспользованные подарки всегда можно найти командой /gifts.",
+        "gift_share": "Дарю тебе месяц премиума в Wordlore, боте про истории слов. Открой ссылку:",
+        "gift_got": "🎁 <b>Тебе подарили премиум Wordlore на {days} дней!</b>\n\nОткрыты безлимитные викторины, все коллекции и весь архив слов.",
+        "gift_used": "Этот подарок уже активирован.", "gift_own": "Это твой подарок. Отправь ссылку другу:\n{link}",
+        "gift_thanks": "🎉 Твой подарок активировали! Премиум Wordlore теперь у {name}.", "gifts_none": "Неиспользованных подарков нет. Подарить премиум: /premium",
+        "gifts_list": "🎁 Неиспользованные подарки (отправь ссылку другу):",
         "invite_welcome": "🎁 Ты пришёл по приглашению: +{c} бонусный раунд викторины.",
         "premium": ("⭐ <b>Wordlore Премиум</b>\n\n• Безлимитные раунды викторины\n• Весь архив: любое слово из {n} через /random\n"
                     "• Все коллекции слов по языкам-источникам\n• Сохранённые слова без лимита\n• Серия переживёт один пропущенный день\n\n{status}"),
@@ -138,6 +147,15 @@ T = {
         "coll_title": "📚 <b>Word collections</b>\n\nWords grouped by where they came from. Tap a collection and I'll show a random word from it.\n🔒 is for premium, “{free}” is open to everyone.",
         "coll_locked": "🔒 This collection is a premium feature. “{free}” is free, premium opens them all.",
         "streak_reward": "🎁 {n}-day streak! Here is a bonus: +{b} quiz round.",
+        "buy_gift": "🎁 Gift a friend 30 days · {p} ⭐", "inv_title_gift": "Premium gift, 30 days",
+        "inv_desc_gift": "A gift link: your friend opens it and gets 30 days of premium",
+        "gift_paid": "Thank you! 🎁 The gift is paid, the link comes in the next message.",
+        "gift_ready": "🎁 <b>Your gift is ready</b>\n\nSend this link to a friend. They open it and get Wordlore premium for {days} days:\n{link}\n\nUnused gifts are always listed under /gifts.",
+        "gift_share": "A month of Wordlore premium for you, a bot about the stories behind words. Open the link:",
+        "gift_got": "🎁 <b>Someone gave you {days} days of Wordlore premium!</b>\n\nUnlimited quizzes, every collection and the whole word archive are open.",
+        "gift_used": "This gift has already been redeemed.", "gift_own": "This is your own gift. Send the link to a friend:\n{link}",
+        "gift_thanks": "🎉 Your gift was redeemed! {name} now has Wordlore premium.", "gifts_none": "No unused gifts. Gift premium: /premium",
+        "gifts_list": "🎁 Unused gifts (send a link to a friend):",
         "invite_welcome": "🎁 You joined by invitation: +{c} bonus quiz round.",
         "premium": ("⭐ <b>Wordlore Premium</b>\n\n• Unlimited quiz rounds\n• Full archive: any of {n} words via /random\n"
                     "• All word collections by source language\n• Unlimited saved words\n• Your streak survives one missed day\n\n{status}"),

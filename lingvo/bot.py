@@ -144,6 +144,8 @@ async def start(m: Message):
             pass  # the inviter may have blocked the bot
     if duel_code is not None:
         return await start_duel(m, user, duel_code)
+    if arg.startswith("gift_"):
+        return await redeem(m, user, arg[5:])
     if arg == "quiz":
         return await start_round(m, user)
     if arg == "sub":
@@ -490,7 +492,8 @@ async def show_premium(m: Message, user) -> None:
     off = round(100 - 100 * PRODUCTS["premium_365"] / (12 * PRODUCTS["premium_30"]))
     await m.answer(tr(user, "premium", n=len(WORDS), status=status), parse_mode="HTML", reply_markup=keyboard(
         [button(t["buy_30"].format(p=PRODUCTS["premium_30"]), "buy:premium_30")],
-        [button(t["buy_365"].format(p=PRODUCTS["premium_365"], off=off), "buy:premium_365")]))
+        [button(t["buy_365"].format(p=PRODUCTS["premium_365"], off=off), "buy:premium_365")],
+        [button(t["buy_gift"].format(p=PRODUCTS["gift_30"]), "buy:gift_30")]))
 
 
 @router.callback_query(F.data.startswith("buy:"))
@@ -499,15 +502,68 @@ async def buy(c: CallbackQuery):
     if key not in PRODUCTS:
         return await c.answer()
     t = T[lang(user)]
-    kind = key.split("_")[1]
-    await send_invoice(c.bot, c.message.chat.id, t[f"inv_title_{kind}"], t["inv_desc"], key, PRODUCTS[key])
+    if key.startswith("gift_"):
+        await send_invoice(c.bot, c.message.chat.id, t["inv_title_gift"], t["inv_desc_gift"], key, PRODUCTS[key])
+    else:
+        kind = key.split("_")[1]
+        await send_invoice(c.bot, c.message.chat.id, t[f"inv_title_{kind}"], t["inv_desc"], key, PRODUCTS[key])
     await c.answer()
 
 
 def on_paid(uid: int, payload: str) -> str:
+    lg = store.get_lang(uid) or "ru"
+    if payload.startswith("gift_"):
+        store.create_gift(uid, PRODUCT_DAYS.get(payload, 30))  # created here, so a paid gift can never be lost
+        return T[lg]["gift_paid"]
     store.add_premium(uid, PRODUCT_DAYS.get(payload, 30))
     date = datetime.fromtimestamp(store.premium_until(uid), TZ).strftime("%d.%m.%Y")
-    return T["ru"]["paid"].format(date=date) + "\n\n" + T["en"]["paid"].format(date=date)
+    return T[lg]["paid"].format(date=date)
+
+
+def gift_link(username: str, code: str) -> str:
+    return f"https://t.me/{username}?start=gift_{code}"
+
+
+async def after_paid(m: Message, payload: str) -> None:
+    if payload.startswith("gift_"):
+        user = m.from_user
+        codes = store.open_gifts(user.id)
+        if codes:
+            await send_gift_link(m, user, codes[0])
+
+
+async def send_gift_link(m: Message, user, code: str) -> None:
+    t = T[lang(user)]
+    link = gift_link(await bot_username(m.bot), code)
+    await m.answer(t["gift_ready"].format(days=store.get_gift(code)["days"], link=link), parse_mode="HTML",
+                   disable_web_page_preview=True, reply_markup=keyboard([button(t["btn_share"], url=share_url(link, t["gift_share"]))]))
+
+
+async def redeem(m: Message, user, code: str) -> None:
+    g = store.get_gift(code)
+    if g is None:
+        return await m.answer(tr(user, "gift_used"), reply_markup=menu(user))
+    if g["giver"] == user.id:
+        return await m.answer(tr(user, "gift_own", link=gift_link(await bot_username(m.bot), code)), disable_web_page_preview=True)
+    if not store.redeem_gift(code, user.id):
+        return await m.answer(tr(user, "gift_used"), reply_markup=menu(user))
+    store.add_premium(user.id, g["days"])
+    await m.answer(tr(user, "gift_got", days=g["days"]), parse_mode="HTML", reply_markup=menu(user))
+    glg = store.get_lang(g["giver"]) or "ru"
+    try:
+        await m.bot.send_message(g["giver"], T[glg]["gift_thanks"].format(name=display_name(user, glg)), parse_mode="HTML")
+    except Exception:
+        pass
+
+
+@router.message(Command("gifts"))
+async def gifts_cmd(m: Message):
+    user = m.from_user
+    codes = store.open_gifts(user.id)
+    if not codes:
+        return await m.answer(tr(user, "gifts_none"))
+    name = await bot_username(m.bot)
+    await m.answer(tr(user, "gifts_list") + "\n" + "\n".join(gift_link(name, c) for c in codes[:10]), disable_web_page_preview=True)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -540,7 +596,7 @@ async def menu_button(c: CallbackQuery):
     await c.answer()
 
 
-router.include_router(payments_router(store, PRODUCTS, on_paid))
+router.include_router(payments_router(store, PRODUCTS, on_paid, after_paid))
 
 # Free-text search lives in its own router that is included AFTER the payments router, so commands
 # like /paysupport and /stats (which are handled there) are never swallowed by a catch-all text handler.

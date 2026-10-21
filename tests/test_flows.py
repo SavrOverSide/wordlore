@@ -236,7 +236,7 @@ class WordloreFlows(unittest.IsolatedAsyncioTestCase):
                 for field in re.findall(r"\{(\w+)\}", val):
                     self.assertIn(field, {"n", "total", "a", "free", "price", "score", "rank", "streak", "correct", "best", "answered",
                                           "rounds", "saved", "refs", "prem", "date", "limit", "b", "c", "link", "p", "off", "word",
-                                          "status", "promo", "name", "mine", "theirs", "verdict", "q"}, (lg, key, field))
+                                          "status", "promo", "name", "mine", "theirs", "verdict", "q", "days"}, (lg, key, field))
 
 
 async def play_round(c, answers):
@@ -428,6 +428,46 @@ class Search(unittest.IsolatedAsyncioTestCase):
         n = len(d.log)
         await d.say("/wishes")
         self.assertEqual(len(d.log), n)
+
+
+class Gifts(unittest.IsolatedAsyncioTestCase):
+    async def test_buy_gift_friend_redeems_giver_thanked(self):
+        g = chat(9801)
+        await g.say("/premium")
+        self.assertIn("buy:gift_30", [b.callback_data for b in g.buttons()])
+        BOT.sent.clear()
+        await g.press("buy:gift_30", on=harness.Message(g.user, "", BOT))
+        inv = [x for x in BOT.sent if x["kind"] == "invoice"][0]
+        self.assertEqual((inv["payload"], inv["prices"][0].amount), ("gift_30", 99))
+        ok, _ = await g.pay("gift_30", 99)
+        self.assertTrue(ok)
+        self.assertFalse(store.is_premium(9801))                 # the giver does not get it
+        link = next(w for x in g.log if x.get("text") for w in x["text"].split() if "start=gift_" in w)
+        code = link.split("gift_")[1]
+        assert_buttons_routable(self, g)
+        await g.say("/gifts")
+        self.assertIn(code, g.last()["text"])
+        await g.say(f"/start gift_{code}")                       # opening your own gift does nothing
+        self.assertFalse(store.is_premium(9801))
+        f = chat(9802)
+        f.user.first_name = "Маша"
+        BOT.sent.clear()
+        await f.say(f"/start gift_{code}")
+        self.assertTrue(store.is_premium(9802))
+        self.assertIn("🎁", f.log[0]["text"])
+        thanks = [x for x in BOT.sent if x["chat_id"] == 9801]
+        self.assertTrue(thanks and "Маша" in thanks[0]["text"])
+        h = chat(9803)
+        await h.say(f"/start gift_{code}")                       # second use: refused
+        self.assertFalse(store.is_premium(9803))
+        self.assertIn("уже активирован", h.last()["text"])
+        await g.say("/gifts")
+        self.assertIn("нет", g.last()["text"])
+
+    async def test_unknown_gift_code(self):
+        c = chat(9804)
+        await c.say("/start gift_nope")
+        self.assertFalse(store.is_premium(9804))
 
 
 class StreakReward(unittest.IsolatedAsyncioTestCase):

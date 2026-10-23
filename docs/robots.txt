@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://savroverside.github.io/wordlore/sitemap.xml

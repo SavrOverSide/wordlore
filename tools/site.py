@@ -85,6 +85,21 @@ def ru_gloss(g: str) -> str:
     return g.split(" · ")[0]
 
 
+def share_text(w) -> str:
+    from urllib.parse import quote
+    return quote(f"Знал, откуда слово «{w['word']}»?")
+
+
+def faq_ld(w) -> str:
+    """Question-and-answer markup, so search engines can show the answer right in the results."""
+    data = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": f"Откуда произошло слово «{w['word']}»?",
+         "acceptedAnswer": {"@type": "Answer", "text": w["ru"]}},
+        {"@type": "Question", "name": w["q"]["ru"],
+         "acceptedAnswer": {"@type": "Answer", "text": w["a"].split(" / ")[0]}}]}
+    return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+
+
 def word_page(i: int) -> str:
     w = WORDS[i]
     origin = w.get("origin", "").split(" · ")[0]
@@ -109,11 +124,13 @@ def word_page(i: int) -> str:
 <p>{e(w['q']['ru'])}</p><ul>{options}</ul>
 <details><summary>Показать ответ</summary><p><b>{e(w['a'].split(' / ')[0])}</b>. {e((w.get('fact') or {}).get('ru', ''))}</p></details></div>
 <div class="card" lang="en"><h2>In English</h2><p>{e(w['en'])}</p></div>
+<p><a class="btn alt" href="https://t.me/share/url?url={e(BASE + '/w/' + SLUGS[i] + '.html')}&amp;text={e(share_text(w))}">Отправить другу в Telegram</a></p>
 <div class="cta"><p><b>Понравилось?</b> Каждое утро новое слово с такой историей в Telegram, а в боте викторина на 5 вопросов и дуэли с друзьями.</p>
 <a class="btn" href="https://t.me/wordlore_bot?start=quiz">Сыграть в викторину</a></div>
 <h2>Ещё слова из коллекции «{e(coll_title(COLL[i], 'ru').split(' ', 1)[1])}»</h2>
 <ul class="grid">{rel}</ul>
 """
+    body += faq_ld(w)
     desc = w["ru"] if len(w["ru"]) <= 155 else w["ru"][:152].rsplit(" ", 1)[0] + "…"
     return page(f"Откуда слово «{w['word']}»: происхождение и история | Wordlore", desc, f"w/{SLUGS[i]}.html", body)
 

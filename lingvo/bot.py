@@ -20,10 +20,12 @@ from common.daily import TZ
 from common.growth import parse_ref, ref_link, share_url, start_arg
 from common.stars import payments_router, send_invoice
 from .card import render, render_result
+from .site import word_urls
 from .collections import FREE_COLLECTION, all_keys, members, title as coll_title
 from .texts import (FREE_ROUNDS, FREE_SAVED, INVITEE_BONUS, INVITER_BONUS, STREAK_REWARD, STREAK_REWARD_EVERY, PRODUCT_DAYS, PRODUCTS, QUESTIONS, T, rank_for)
 
 WORDS = json.loads((Path(__file__).parent / "words.json").read_text(encoding="utf-8"))
+URLS = word_urls(WORDS)   # each word's page on the website
 
 store = Store("lingvo")
 router = Router()
@@ -105,11 +107,11 @@ def word_keyboard(user, w: dict, link: str, coll: str = "") -> InlineKeyboardMar
     text = t["share_word"].format(word=w["word"])
     rows = [
         [button(t["btn_save"], f"sv:{word_index(w)}"), button(t["btn_share"], url=share_url(link, text))],
-        [button(t["btn_quiz"], "m:quiz")],
+        [button(t["btn_quiz"], "m:quiz"), button(t["btn_more"], url=URLS[word_index(w)])],
     ]
     if coll:
         rows.insert(1, [button(t["btn_more_coll"], f"c:{coll}"), button(t["btn_all_coll"], "m:coll")])
-        rows[2] = [button(t["btn_coll_quiz"], f"cq:{coll}")]
+        rows[2] = [button(t["btn_coll_quiz"], f"cq:{coll}"), button(t["btn_more"], url=URLS[word_index(w)])]
     return keyboard(*rows)
 
 

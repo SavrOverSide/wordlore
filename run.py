@@ -12,7 +12,7 @@ from datetime import datetime
 from common.daily import TZ, every_day
 from common.profile import setup_profile
 from common.growth import broadcast, promo, ref_link, share_url
-from lingvo.bot import WORDS, esc, pick, router, store, word_index, word_of_day, word_photo
+from lingvo.bot import URLS, WORDS, esc, pick, router, store, word_index, word_of_day, word_photo
 from common.db import today
 from lingvo.profile import COMMANDS, DESCRIPTION, SHORT
 from lingvo.texts import T
@@ -28,6 +28,7 @@ async def post_word(bot: Bot) -> None:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="🧠 Викторина / Quiz", url=f"https://t.me/{me.username}?start=quiz")],
             [InlineKeyboardButton(text="🔔 Слово дня в личку / Daily DM", url=f"https://t.me/{me.username}?start=sub")],
+            [InlineKeyboardButton(text="📖 Подробнее на сайте / Read more", url=URLS[word_index(w)])],
         ])
         caption = f"<b>{esc(w['word'])}</b>\n\n🇷🇺 {esc(w['ru'])}\n\n🇬🇧 {esc(w['en'])}\n\n{promo('words')}"
         try:
@@ -42,7 +43,8 @@ async def post_word(bot: Bot) -> None:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text=t["btn_quiz"], callback_data="m:quiz"),
              InlineKeyboardButton(text=t["btn_save"], callback_data=f"sv:{word_index(w)}")],
-            [InlineKeyboardButton(text=t["btn_share"], url=share_url(link, t["share_word"].format(word=w["word"])))],
+            [InlineKeyboardButton(text=t["btn_share"], url=share_url(link, t["share_word"].format(word=w["word"]))),
+             InlineKeyboardButton(text=t["btn_more"], url=URLS[word_index(w)])],
         ])
         await bot.send_photo(uid, photo, caption=f"<b>{esc(w['word'])}</b>\n\n{esc(w[lg])}"[:1000], parse_mode="HTML", reply_markup=kb)
 

@@ -643,3 +643,12 @@ class Profile(unittest.IsolatedAsyncioTestCase):
         for c in names:
             m = harness.Message(harness.User(77), f"/{c}", Bot("x"))
             self.assertIsNotNone(await wl.router.feed("message", m), c)
+
+
+class Website(unittest.TestCase):
+    def test_every_word_has_a_built_page(self):
+        import pathlib
+        docs = pathlib.Path(__file__).resolve().parent.parent / "docs" / "w"
+        for url in wl.URLS:
+            self.assertTrue((docs / url.rsplit("/", 1)[1]).exists(), url)
+        self.assertEqual(len(set(wl.URLS)), len(wl.WORDS))

@@ -6,7 +6,6 @@ Published with GitHub Pages (Settings -> Pages -> Deploy from branch: main, /doc
 import html
 import zlib
 import json
-import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -14,27 +13,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from lingvo.collections import all_keys, members, title as coll_title  # noqa: E402
+from lingvo.site import SITE as BASE, slugs  # noqa: E402
 
-BASE = "https://savroverside.github.io/wordlore"
 OUT = ROOT / "docs"
 WORDS = json.loads((ROOT / "lingvo" / "words.json").read_text(encoding="utf-8"))
-TR = dict(zip("абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
-              "a b v g d e e zh z i y k l m n o p r s t u f kh ts ch sh shch - y - e yu ya".split()))
+SLUGS = slugs(WORDS)
 e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
-
-
-def slug(word: str, used: set) -> str:
-    s = "".join(TR.get(c, c) for c in word.lower()).replace("-", "")
-    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-") or "word"
-    base, n = s, 2
-    while s in used:
-        s, n = f"{base}-{n}", n + 1
-    used.add(s)
-    return s
-
-
-used: set = set()
-SLUGS = [slug(w["word"], used) for w in WORDS]
 COLL = {i: k for k in all_keys() for i in members(WORDS, k)}
 
 CSS = """

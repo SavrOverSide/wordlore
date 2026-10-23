@@ -1,3 +1,5 @@
+**Сайт:** https://savroverside.github.io/wordlore/ · **Бот:** https://t.me/wordlore_bot · **Канал:** https://t.me/wordlores
+
 # Wordlore
 
 Telegram-бот про происхождение слов (RU/EN): слово дня, этимология, викторины. Каждое утро публикует слово дня в [@wordlores](https://t.me/wordlores).

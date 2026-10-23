@@ -75,7 +75,7 @@ def page(title, desc, path, body, lang="ru"):
 {body}
 </main>
 <footer class="wrap">Wordlore: истории слов. Каждый день новое слово в Telegram: <a href="https://t.me/wordlores">@wordlores</a>.
-Этимология дана по открытым словарям (Etymonline, Викисловарь и др.); спорные версии помечены.</footer>
+Этимология дана по открытым словарям (Etymonline, Викисловарь и др.); спорные версии помечены.<br>Ещё наш проект: <a href="https://savroverside.github.io/ideaforgegen/">генераторы идей для настольных ролевых игр</a>.</footer>
 </body>
 </html>
 """

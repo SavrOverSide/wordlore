@@ -17,6 +17,8 @@ from lingvo.site import SITE as BASE, slugs  # noqa: E402
 
 OUT = ROOT / "docs"
 WORDS = json.loads((ROOT / "lingvo" / "words.json").read_text(encoding="utf-8"))
+# Long-form stories (several sections, sources) for the words that have them; the rest show the short story.
+LONG = json.loads((ROOT / "lingvo" / "longreads.json").read_text(encoding="utf-8"))
 SLUGS = slugs(WORDS)
 e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
 COLL = {i: k for k in all_keys() for i in members(WORDS, k)}
@@ -94,10 +96,18 @@ def faq_ld(w) -> str:
     """Question-and-answer markup, so search engines can show the answer right in the results."""
     data = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": f"Откуда произошло слово «{w['word']}»?",
-         "acceptedAnswer": {"@type": "Answer", "text": w["ru"]}},
+         "acceptedAnswer": {"@type": "Answer", "text": w["ru"] + (" " + LONG[w["word"]]["sections"][0][1] if w["word"] in LONG else "")}},
         {"@type": "Question", "name": w["q"]["ru"],
          "acceptedAnswer": {"@type": "Answer", "text": w["a"].split(" / ")[0]}}]}
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+
+
+def longread(w) -> str:
+    lr = LONG.get(w["word"])
+    if not lr:
+        return ""
+    parts = "".join(f"<h2>{e(h)}</h2><p>{e(t)}</p>" for h, t in lr["sections"])
+    return parts + f'<p class="muted">Источники: {e(lr["sources"])}.</p>\n'
 
 
 def word_page(i: int) -> str:
@@ -120,7 +130,7 @@ def word_page(i: int) -> str:
 <p><span class="badge">{e(origin)}</span> <span class="muted">· {e(coll_title(COLL[i], 'ru'))}</span></p>
 <ol class="chain" aria-label="Путь слова">{''.join(chain)}</ol>
 <p>{e(w['ru'])}</p>
-<div class="card"><h2>Проверь себя</h2>
+{longread(w)}<div class="card"><h2>Проверь себя</h2>
 <p>{e(w['q']['ru'])}</p><ul>{options}</ul>
 <details><summary>Показать ответ</summary><p><b>{e(w['a'].split(' / ')[0])}</b>. {e((w.get('fact') or {}).get('ru', ''))}</p></details></div>
 <div class="card" lang="en"><h2>In English</h2><p>{e(w['en'])}</p></div>
@@ -165,17 +175,33 @@ document.getElementById('q').addEventListener('input', function () {{
     return page("Wordlore: происхождение слов, истории и этимология", f"{len(WORDS)} историй о происхождении слов: откуда они пришли и что значили раньше. Викторина и слово дня в Telegram.", "", body)
 
 
+def lastmods(files: list) -> list:
+    """Date each page last changed, so search engines recrawl only what really changed (kept in docs/lastmod.json)."""
+    store = OUT / "lastmod.json"
+    try:
+        old = json.loads(store.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        old = {}
+    today, new = date.today().isoformat(), {}
+    for f in files:
+        h = format(zlib.crc32((OUT / f).read_bytes()), "x")
+        prev = old.get(f)
+        new[f] = prev if prev and prev[0] == h else [h, today]
+    store.write_text(json.dumps(new, indent=0, sort_keys=True) + "\n", encoding="utf-8")
+    return [new[f][1] for f in files]
+
+
 def main():
     (OUT / "w").mkdir(parents=True, exist_ok=True)
     (OUT / "style.css").write_text(CSS.strip() + "\n", encoding="utf-8")
     (OUT / "index.html").write_text(index_page(), encoding="utf-8")
     for i in range(len(WORDS)):
         (OUT / "w" / f"{SLUGS[i]}.html").write_text(word_page(i), encoding="utf-8")
-    today = date.today().isoformat()
     urls = [f"{BASE}/"] + [f"{BASE}/w/{s}.html" for s in SLUGS]
+    files = ["index.html"] + [f"w/{s}.html" for s in SLUGS]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                                     + "".join(f"<url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n",
-                                     encoding="utf-8")
+                                     + "".join(f"<url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n" for u, d in zip(urls, lastmods(files)))
+                                     + "</urlset>\n", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     print(len(urls), "pages")
